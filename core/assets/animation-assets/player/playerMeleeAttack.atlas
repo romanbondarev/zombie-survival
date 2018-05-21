@@ -1,0 +1,111 @@
+
+playerMeleeAttack.png
+size: 1024,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+survivor-meleeattack_knife
+  rotate: false
+  xy: 2, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 0
+survivor-meleeattack_knife
+  rotate: false
+  xy: 2, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 1
+survivor-meleeattack_knife
+  rotate: false
+  xy: 128, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 2
+survivor-meleeattack_knife
+  rotate: false
+  xy: 128, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 3
+survivor-meleeattack_knife
+  rotate: false
+  xy: 254, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 4
+survivor-meleeattack_knife
+  rotate: false
+  xy: 254, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 5
+survivor-meleeattack_knife
+  rotate: false
+  xy: 380, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 6
+survivor-meleeattack_knife
+  rotate: false
+  xy: 380, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 7
+survivor-meleeattack_knife
+  rotate: false
+  xy: 506, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 8
+survivor-meleeattack_knife
+  rotate: false
+  xy: 506, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 9
+survivor-meleeattack_knife
+  rotate: false
+  xy: 632, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 10
+survivor-meleeattack_knife
+  rotate: false
+  xy: 632, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 11
+survivor-meleeattack_knife
+  rotate: false
+  xy: 758, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 12
+survivor-meleeattack_knife
+  rotate: false
+  xy: 758, 2
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 13
+survivor-meleeattack_knife
+  rotate: false
+  xy: 884, 120
+  size: 124, 116
+  orig: 124, 116
+  offset: 0, 0
+  index: 14

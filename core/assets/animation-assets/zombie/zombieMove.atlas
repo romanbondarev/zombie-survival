@@ -1,0 +1,125 @@
+
+zombieMove.png
+size: 1024,256
+format: RGBA8888
+filter: Nearest,Nearest
+repeat: none
+skeleton-move
+  rotate: false
+  xy: 2, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 0
+skeleton-move
+  rotate: false
+  xy: 2, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 16
+skeleton-move
+  rotate: false
+  xy: 2, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 1
+skeleton-move
+  rotate: false
+  xy: 125, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 2
+skeleton-move
+  rotate: false
+  xy: 2, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 3
+skeleton-move
+  rotate: false
+  xy: 125, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 4
+skeleton-move
+  rotate: false
+  xy: 248, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 5
+skeleton-move
+  rotate: false
+  xy: 125, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 6
+skeleton-move
+  rotate: false
+  xy: 248, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 7
+skeleton-move
+  rotate: false
+  xy: 371, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 8
+skeleton-move
+  rotate: false
+  xy: 248, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 9
+skeleton-move
+  rotate: false
+  xy: 371, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 10
+skeleton-move
+  rotate: false
+  xy: 494, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 11
+skeleton-move
+  rotate: false
+  xy: 371, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 12
+skeleton-move
+  rotate: false
+  xy: 494, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 13
+skeleton-move
+  rotate: false
+  xy: 617, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 14
+skeleton-move
+  rotate: false
+  xy: 494, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 15

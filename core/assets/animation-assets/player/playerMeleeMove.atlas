@@ -1,0 +1,146 @@
+
+playerMeleeMove.png
+size: 1024,128
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+survivor-move_knife
+  rotate: false
+  xy: 2, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 0
+survivor-move_knife
+  rotate: false
+  xy: 2, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 1
+survivor-move_knife
+  rotate: false
+  xy: 95, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 2
+survivor-move_knife
+  rotate: false
+  xy: 95, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 3
+survivor-move_knife
+  rotate: false
+  xy: 188, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 4
+survivor-move_knife
+  rotate: false
+  xy: 188, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 5
+survivor-move_knife
+  rotate: false
+  xy: 281, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 6
+survivor-move_knife
+  rotate: false
+  xy: 281, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 7
+survivor-move_knife
+  rotate: false
+  xy: 374, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 8
+survivor-move_knife
+  rotate: false
+  xy: 374, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 9
+survivor-move_knife
+  rotate: false
+  xy: 467, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 10
+survivor-move_knife
+  rotate: false
+  xy: 467, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 11
+survivor-move_knife
+  rotate: false
+  xy: 560, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 12
+survivor-move_knife
+  rotate: false
+  xy: 560, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 13
+survivor-move_knife
+  rotate: false
+  xy: 653, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 14
+survivor-move_knife
+  rotate: false
+  xy: 653, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 15
+survivor-move_knife
+  rotate: false
+  xy: 746, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 16
+survivor-move_knife
+  rotate: false
+  xy: 746, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 17
+survivor-move_knife
+  rotate: false
+  xy: 839, 64
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 18
+survivor-move_knife
+  rotate: false
+  xy: 839, 2
+  size: 91, 60
+  orig: 91, 60
+  offset: 0, 0
+  index: 19

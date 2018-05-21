@@ -1,0 +1,27 @@
+
+playerRifleShoot.png
+size: 128,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+survivor-shoot_rifle
+  rotate: false
+  xy: 2, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 0
+survivor-shoot_rifle
+  rotate: false
+  xy: 2, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 1
+survivor-shoot_rifle
+  rotate: false
+  xy: 2, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 2

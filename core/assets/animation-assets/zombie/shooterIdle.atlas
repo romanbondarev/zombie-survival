@@ -1,0 +1,13 @@
+
+shooterIdle.png
+size: 128,128
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+idle
+  rotate: false
+  xy: 2, 2
+  size: 124, 74
+  orig: 124, 74
+  offset: 0, 0
+  index: -1

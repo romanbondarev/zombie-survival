@@ -1,0 +1,146 @@
+
+playerHandgunMove.png
+size: 512,256
+format: RGBA8888
+filter: Linear,Linear
+repeat: none
+survivor-move_handgun
+  rotate: false
+  xy: 2, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 0
+survivor-move_handgun
+  rotate: false
+  xy: 2, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 1
+survivor-move_handgun
+  rotate: false
+  xy: 2, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 19
+survivor-move_handgun
+  rotate: false
+  xy: 125, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 2
+survivor-move_handgun
+  rotate: false
+  xy: 125, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 18
+survivor-move_handgun
+  rotate: false
+  xy: 2, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 3
+survivor-move_handgun
+  rotate: false
+  xy: 2, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 17
+survivor-move_handgun
+  rotate: false
+  xy: 125, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 4
+survivor-move_handgun
+  rotate: false
+  xy: 125, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 16
+survivor-move_handgun
+  rotate: false
+  xy: 248, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 5
+survivor-move_handgun
+  rotate: false
+  xy: 248, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 15
+survivor-move_handgun
+  rotate: false
+  xy: 125, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 6
+survivor-move_handgun
+  rotate: false
+  xy: 125, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 14
+survivor-move_handgun
+  rotate: false
+  xy: 248, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 7
+survivor-move_handgun
+  rotate: false
+  xy: 248, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 13
+survivor-move_handgun
+  rotate: false
+  xy: 371, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 8
+survivor-move_handgun
+  rotate: false
+  xy: 371, 150
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 12
+survivor-move_handgun
+  rotate: false
+  xy: 248, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 9
+survivor-move_handgun
+  rotate: false
+  xy: 248, 2
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 11
+survivor-move_handgun
+  rotate: false
+  xy: 371, 76
+  size: 121, 72
+  orig: 121, 72
+  offset: 0, 0
+  index: 10
