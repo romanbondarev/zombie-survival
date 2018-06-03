@@ -93,7 +93,7 @@ public class PlayState extends GameState {
 
             batch.begin();
             bullets.forEach(bullet -> bullet.getSprite().draw(batch)); // Render bullets textures
-            items.forEach(item -> item.getSprite().draw(batch)); // Render items on map
+            items.forEach(item -> item.getRoundSprite().draw(batch)); // Render items on map
             zombies.forEach(zombie -> zombie.getZombieAnimation().renderAnimation(batch)); // Render the zombies animations
             zombieShooters.forEach(zombie -> zombie.getZombieShooterAnimation().renderAnimation(batch)); // Render the zombieShooters animations
             player.render(); // Render the player animations
@@ -114,7 +114,7 @@ public class PlayState extends GameState {
             gameOver.resetInputProcessor();
             gameOver.update(killCounter);
         } else if (!Constants.IN_GAME_PAUSE) {
-            hud.resetInputProcessor();
+            hud.update();
             world.step(1 / 60f, 6, 2);
             bullets.forEach(Bullet::update); // Update the position of each bullet
             zombies.forEach(zombie -> zombie.update(player)); // Update the position of each zombie
@@ -138,7 +138,6 @@ public class PlayState extends GameState {
             mapRenderer.setView(camera);
             batch.setProjectionMatrix(camera.combined);
         } else {
-            pause.resetInputProcessor();
             pause.update(killCounter);
         }
         frameRate.update(); // FPS display

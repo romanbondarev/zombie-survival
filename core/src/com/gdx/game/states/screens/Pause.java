@@ -22,6 +22,7 @@ import com.gdx.game.Application;
 import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.states.PlayState;
 import com.gdx.game.utils.Constants;
+import com.gdx.game.utils.Utils;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
@@ -102,6 +103,7 @@ public class Pause {
 
                 if (event.getTarget().getName().equals("QUIT_BUTTON")) {
                     event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(() -> {
+                        Utils.saveGameJSON(killCounter);
                         Gdx.app.exit();
                     })));
                 }
@@ -154,6 +156,7 @@ public class Pause {
     }
 
     public void update(int amount) {
+        resetInputProcessor();
         killCounter = amount;
         counter.setText("ZOMBIES KILLED: " + amount);
         stage.act();
