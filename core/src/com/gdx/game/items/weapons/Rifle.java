@@ -7,6 +7,7 @@ import com.gdx.game.utils.Constants;
 public final class Rifle extends Weapon {
     public Rifle(String name) {
         super(WeaponType.RIFLE, name, Constants.rifleDamage, 25,
-                Application.assetManager.get("ui/inventory-items-round/rifle.png", Texture.class));
+                Application.assetManager.get("ui/inventory-items-round/rifle.png", Texture.class),
+                Application.assetManager.get("ui/inventory-items/rifle.png", Texture.class));
     }
 }

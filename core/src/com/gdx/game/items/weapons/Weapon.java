@@ -23,8 +23,8 @@ public abstract class Weapon extends Item {
         SHOTGUN, RIFLE, HANDGUN
     }
 
-    public Weapon(WeaponType weaponType, String name, int damage, int clipMaxAmmo, Texture texture) {
-        super(ItemType.WEAPON, name, texture);
+    public Weapon(WeaponType weaponType, String name, int damage, int clipMaxAmmo, Texture round, Texture square) {
+        super(ItemType.WEAPON, name, round, square);
         this.weaponType = weaponType;
         this.mainClipAmmo = 0;
         this.secondClipAmmo = 0;

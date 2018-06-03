@@ -6,16 +6,18 @@ import com.badlogic.gdx.graphics.g2d.Sprite;
 public abstract class Item {
     private ItemType itemType;
     private String name;
-    private Sprite sprite;
+    private Sprite roundSprite;
+    private Sprite squareSprite;
 
     public enum ItemType {
         WEAPON, WEAPON_ACCESSORY, FIRST_AID_KIT, ARMOR
     }
 
-    public Item(ItemType itemType, String name, Texture texture) {
+    public Item(ItemType itemType, String name, Texture round, Texture square) {
         this.itemType = itemType;
         this.name = name;
-        this.sprite = new Sprite(texture);
+        this.roundSprite = new Sprite(round);
+        this.squareSprite = new Sprite(square);
     }
 
     public ItemType getItemType() {
@@ -26,20 +28,24 @@ public abstract class Item {
         return name;
     }
 
-    public Sprite getSprite() {
-        return sprite;
+    public Sprite getRoundSprite() {
+        return roundSprite;
     }
 
-    public void setSprite(Sprite sprite) {
-        this.sprite = sprite;
+    public Sprite getSquareSprite() {
+        return squareSprite;
+    }
+
+    public void setRoundSprite(Sprite roundSprite) {
+        this.roundSprite = roundSprite;
     }
 
     public void setSpritePosition(float x, float y) {
-        sprite.setPosition(x, y);
+        roundSprite.setPosition(x, y);
     }
 
     public void rotateSprite(int degrees) {
-        getSprite().rotate(degrees);
+        getRoundSprite().rotate(degrees);
     }
 
     @Override

@@ -13,8 +13,8 @@ public class Armor extends Item {
     private int currentWearLevel;
     private ArmorType armorType;
 
-    public Armor(ArmorType armorType, String name, int damageAbsorptionLevel, int maxWearLevel, Texture texture) {
-        super(ItemType.ARMOR, name, texture);
+    public Armor(ArmorType armorType, String name, int damageAbsorptionLevel, int maxWearLevel, Texture round, Texture square) {
+        super(ItemType.ARMOR, name, round, square);
         this.damageAbsorptionLevel = damageAbsorptionLevel;
         this.maxWear = maxWearLevel;
         this.armorType = armorType;

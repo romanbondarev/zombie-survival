@@ -8,8 +8,8 @@ public abstract class Ammo extends Item {
     private int bullets;
     private WeaponType weaponType;
 
-    public Ammo(WeaponType weaponType, int bullets, String name, Texture texture) {
-        super(ItemType.WEAPON_ACCESSORY, name, texture);
+    public Ammo(WeaponType weaponType, int bullets, String name, Texture round, Texture square) {
+        super(ItemType.WEAPON_ACCESSORY, name, round, square);
         this.weaponType = weaponType;
         this.bullets = bullets;
     }
