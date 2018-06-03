@@ -200,8 +200,8 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             // See how item removing and adding works in PlayState objectDeletion() method
             for (Item item1 : new LinkedList<>(((PlayState) gameState).getItems())) {
-                double x = item1.getSprite().getX() + item1.getSprite().getHeight() / 2 - worldToPixels(getPosition().x);
-                double y = item1.getSprite().getY() + item1.getSprite().getWidth() / 2 - worldToPixels(getPosition().y);
+                double x = item1.getRoundSprite().getX() + item1.getRoundSprite().getHeight() / 2 - worldToPixels(getPosition().x);
+                double y = item1.getRoundSprite().getY() + item1.getRoundSprite().getWidth() / 2 - worldToPixels(getPosition().y);
                 double distanceInBetween = Math.sqrt(x * x + y * y);
 
                 if (distanceInBetween < 46) {
