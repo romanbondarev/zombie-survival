@@ -18,13 +18,10 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
 import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.utils.Constants;
+import com.gdx.game.utils.Utils;
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
-import org.json.simple.parser.ParseException;
 
-import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
+import java.util.Optional;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
@@ -135,22 +132,12 @@ public class Menu {
         horizontalGroup.addAction(sequence(alpha(0), delay(0.2f), run(() -> load = true), delay(1f), fadeIn(2, Interpolation.pow5Out)));
 
 
-        Object obj = null;
-        File file = new File("../stats.json");
-        if (file.length() > 0) {
-            // NOT EMPTY
-            try {
-                // TRY TO PARSE
-                obj = new JSONParser().parse(new FileReader("../stats.json"));
-            } catch (IOException | ParseException e) {
-                e.printStackTrace();
-            }
-
-            JSONObject jsonObject = (JSONObject) obj;
-            System.out.println("CURRENT TOP RESULT\nKilled zombies amount = " + jsonObject.get("zombies-killed") + "\n" + jsonObject.get("date"));
-        }
-
-
+        Optional<JSONObject> topScore = Utils.getTopResultJSON();
+        topScore.ifPresent(jsonObject -> System.out.println(
+                "CURRENT TOP SCORE\n" +
+                        "Killed zombies amount = " + jsonObject.get("zombies-killed") + "\n"
+                        + jsonObject.get("date")
+        ));
     }
 
     public void update() {
