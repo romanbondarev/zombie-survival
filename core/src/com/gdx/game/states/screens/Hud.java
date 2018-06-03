@@ -21,10 +21,6 @@ import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
 import com.gdx.game.items.Inventory;
 import com.gdx.game.items.Item;
-import com.gdx.game.items.MedKit;
-import com.gdx.game.items.armor.Armor;
-import com.gdx.game.items.weapons.Weapon;
-import com.gdx.game.items.weapons.ammo.Ammo;
 import com.gdx.game.models.Player;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
@@ -63,14 +59,7 @@ public class Hud {
 
     private Texture backgroundTex = Application.assetManager.get("ui/background/background.png", Texture.class);
     private Texture backgroundLargeTex = Application.assetManager.get("ui/background/background-large.png", Texture.class);
-    private Texture rifleTex = Application.assetManager.get("ui/inventory-items/rifle.png", Texture.class);
-    private Texture handgunTex = Application.assetManager.get("ui/inventory-items/handgun.png", Texture.class);
-    private Texture rifleAmmoTex = Application.assetManager.get("ui/inventory-items/rifleAmmo.png", Texture.class);
-    private Texture handgunAmmoTex = Application.assetManager.get("ui/inventory-items/handgunAmmo.png", Texture.class);
-    private Texture helmetTex = Application.assetManager.get("ui/inventory-items/helmet.png", Texture.class);
-    private Texture vestTex = Application.assetManager.get("ui/inventory-items/vest.png", Texture.class);
     private Texture selectorTex = Application.assetManager.get("ui/inventory-items/selector.png", Texture.class);
-    private Texture medKitTex = Application.assetManager.get("ui/inventory-items/medkit.png", Texture.class);
     private Texture hideTex = Application.assetManager.get("ui/buttons/hide-button.png", Texture.class);
     private Texture showTex = Application.assetManager.get("ui/buttons/show-button.png", Texture.class);
 
@@ -117,8 +106,8 @@ public class Hud {
                         /* Clicked on item in INVENTORY */
                         Item itemToRemove = inventory.getItem(slotID);
                         if (itemToRemove != null) {
-                            itemToRemove.getSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getSprite().getHeight() / 2);
+                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.removeItemFromInventory(itemToRemove);
                         }
@@ -127,8 +116,8 @@ public class Hud {
                         /* Clicked on item in TRAY */
                         Item itemToRemove = inventory.getTray()[slotID - 10];
                         if (itemToRemove != null) {
-                            itemToRemove.getSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getSprite().getHeight() / 2);
+                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.removeItemFromTray(itemToRemove);
                         }
@@ -136,8 +125,8 @@ public class Hud {
                         /* Clicked on helmet */
                         Item itemToRemove = inventory.getHelmetArmor();
                         if (itemToRemove != null) {
-                            itemToRemove.getSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getSprite().getHeight() / 2);
+                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.setHelmetArmor(null);
                         }
@@ -145,8 +134,8 @@ public class Hud {
                         /* Clicked on vest */
                         Item itemToRemove = inventory.getVestArmor();
                         if (itemToRemove != null) {
-                            itemToRemove.getSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getSprite().getHeight() / 2);
+                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.setVestArmor(null);
                         }
@@ -185,7 +174,7 @@ public class Hud {
         /* Creates a inventory tile and adds it into horizontal inventory group */
         for (int i = 0; i < INVENTORY_SIZE; i++) {
             Item item = inventory.getItem(i);
-            HudInventoryImage image = new HudInventoryImage(texturePicker(item), i);
+            HudInventoryImage image = new HudInventoryImage(pickTexture(item), i);
             image.addListener(clickListener);
             invList.add(image);
             inventoryHGroup.addActor(image);
@@ -194,19 +183,19 @@ public class Hud {
         /* Creates a tray tile and adds it into horizontal inventory group */
         for (int i = 0; i < 4; i++) {
             Item item = inventory.getTray()[i];
-            HudInventoryImage image = new HudInventoryImage(texturePicker(item), 10 + i);
+            HudInventoryImage image = new HudInventoryImage(pickTexture(item), 10 + i);
             image.addListener(clickListener);
             trayList.add(image);
             trayHGroup.addActor(image);
         }
 
         /* Helmet armor tile */
-        helmet = new HudInventoryImage(texturePicker(null), 20);
+        helmet = new HudInventoryImage(pickTexture(null), 20);
         helmet.setPosition(stage.getWidth() - backgroundTex.getWidth() - 20, 198);
         helmet.addListener(clickListener);
 
         /* Bulletproof vest armor tile */
-        vest = new HudInventoryImage(texturePicker(null), 21);
+        vest = new HudInventoryImage(pickTexture(null), 21);
         vest.setPosition(stage.getWidth() - backgroundTex.getWidth() - 20, 142);
         vest.addListener(clickListener);
 
@@ -245,21 +234,22 @@ public class Hud {
     }
 
     public void update() {
+        resetInputProcessor();
         stage.act();
         ammoLabel.setText(this.inventory.getSelectedCellItem() != null ? inventory.getSelectedCellItem().toString() : "0 / 0");
 
         for (int i = 0; i < INVENTORY_SIZE; i++) {
             Item item = inventory.getItem(i);
-            invList.get(i).setDrawable(new SpriteDrawable(new Sprite(texturePicker(item))));
+            invList.get(i).setDrawable(new SpriteDrawable(new Sprite(pickTexture(item))));
         }
 
         for (int i = 0; i < 4; i++) {
             Item item = inventory.getTray()[i];
-            trayList.get(i).setDrawable(new SpriteDrawable(new Sprite(texturePicker(item))));
+            trayList.get(i).setDrawable(new SpriteDrawable(new Sprite(pickTexture(item))));
         }
 
-        helmet.setDrawable(new SpriteDrawable(new Sprite(texturePicker(inventory.getHelmetArmor()))));
-        vest.setDrawable(new SpriteDrawable(new Sprite(texturePicker(inventory.getVestArmor()))));
+        helmet.setDrawable(new SpriteDrawable(new Sprite(pickTexture(inventory.getHelmetArmor()))));
+        vest.setDrawable(new SpriteDrawable(new Sprite(pickTexture(inventory.getVestArmor()))));
 
         helmetAbsorbLabel.setText(inventory.getHelmetArmor() != null ? String.valueOf(inventory.getHelmetArmor().getDamageAbsorptionLevel()) : "");
         vestAbosrbLabel.setText(inventory.getVestArmor() != null ? String.valueOf(inventory.getVestArmor().getDamageAbsorptionLevel()) : "");
@@ -292,12 +282,14 @@ public class Hud {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.WHITE);
         shapeRenderer.rect(stage.getViewport().getScreenX() + stage.getWidth() / 2 - progress / 2, stage.getViewport().getScreenY() + stage.getHeight() - 25, progress, 4);
+
         if (inventory.getHelmetArmor() != null) {
             shapeRenderer.rect(stage.getWidth() - 66, 198, 46 - (46 * inventory.getHelmetArmor().getWearLevel()), 4);
         }
         if (inventory.getVestArmor() != null) {
             shapeRenderer.rect(stage.getWidth() - 66, 142, 46 - (46 * inventory.getVestArmor().getWearLevel()), 4);
         }
+
         renderHP(shapeRenderer);
         shapeRenderer.end();
     }
@@ -307,24 +299,10 @@ public class Hud {
         if (player.getHealth() <= 50) shapeRenderer.setColor(Color.ORANGE);
         if (player.getHealth() <= 25) shapeRenderer.setColor(Color.RED);
         shapeRenderer.rect(stage.getWidth() - 4 * backgroundTex.getWidth() - 50, 20, player.getHealth() * 2.14f, 6);
-        shapeRenderer.end();
     }
 
-    private Texture texturePicker(Item item) {
-        Texture texture = backgroundTex;
-        if (item instanceof Armor) {
-            if (((Armor) item).getArmorType().equals(Armor.ArmorType.HEAD)) texture = helmetTex;
-            if (((Armor) item).getArmorType().equals(Armor.ArmorType.BODY)) texture = vestTex;
-        } else if (item instanceof Weapon) {
-            if (((Weapon) item).getWeaponType().equals(Weapon.WeaponType.RIFLE)) texture = rifleTex;
-            if (((Weapon) item).getWeaponType().equals(Weapon.WeaponType.HANDGUN)) texture = handgunTex;
-        } else if (item instanceof Ammo) {
-            if (((Ammo) item).getWeaponType().equals(Weapon.WeaponType.RIFLE)) texture = rifleAmmoTex;
-            if (((Ammo) item).getWeaponType().equals(Weapon.WeaponType.HANDGUN)) texture = handgunAmmoTex;
-        } else if (item instanceof MedKit) {
-            texture = medKitTex;
-        }
-        return texture;
+    private Texture pickTexture(Item item) {
+        return (item != null) ? item.getSquareSprite().getTexture() : backgroundTex;
     }
 
     public void resize(int width, int height) {
@@ -333,16 +311,11 @@ public class Hud {
 
     public void dispose() {
         stage.dispose();
-        rifleAmmoTex.dispose();
-        rifleTex.dispose();
-        handgunAmmoTex.dispose();
-        handgunTex.dispose();
         backgroundTex.dispose();
         backgroundLargeTex.dispose();
-        helmetTex.dispose();
-        vestTex.dispose();
+        hideTex.dispose();
+        showTex.dispose();
         shapeRenderer.dispose();
-        medKitTex.dispose();
     }
 
     public void toggleInventory() {
