@@ -200,8 +200,8 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             // See how item removing and adding works in PlayState objectDeletion() method
             for (Item item1 : new LinkedList<>(((PlayState) gameState).getItems())) {
-                double x = item1.getRoundSprite().getX() + item1.getRoundSprite().getHeight() / 2 - worldToPixels(getPosition().x);
-                double y = item1.getRoundSprite().getY() + item1.getRoundSprite().getWidth() / 2 - worldToPixels(getPosition().y);
+                double x = item1.getCircleSprite().getX() + item1.getCircleSprite().getHeight() / 2 - worldToPixels(getPosition().x);
+                double y = item1.getCircleSprite().getY() + item1.getCircleSprite().getWidth() / 2 - worldToPixels(getPosition().y);
                 double distanceInBetween = Math.sqrt(x * x + y * y);
 
                 if (distanceInBetween < 46) {
@@ -218,22 +218,22 @@ public class Player {
         /* ### Select the TRAY item ###*/
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
             animation.resetReload();
-            inventory.setSelectedCellInt(0);
+            inventory.setSelectedCellID(0);
             animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
             animation.resetReload();
-            inventory.setSelectedCellInt(1);
+            inventory.setSelectedCellID(1);
             animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
             animation.resetReload();
-            inventory.setSelectedCellInt(2);
+            inventory.setSelectedCellID(2);
             animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
         }
         if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
             animation.resetReload();
-            inventory.setSelectedCellInt(3);
+            inventory.setSelectedCellID(3);
             animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
         }
     }

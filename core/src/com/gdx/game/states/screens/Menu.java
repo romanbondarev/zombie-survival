@@ -132,7 +132,7 @@ public class Menu {
         horizontalGroup.addAction(sequence(alpha(0), delay(0.2f), run(() -> load = true), delay(1f), fadeIn(2, Interpolation.pow5Out)));
 
 
-        Optional<JSONObject> topScore = Utils.getTopResultJSON();
+        Optional<JSONObject> topScore = Utils.getTopScoreJSON();
         topScore.ifPresent(jsonObject -> System.out.println(
                 "CURRENT TOP SCORE\n" +
                         "Killed zombies amount = " + jsonObject.get("zombies-killed") + "\n"

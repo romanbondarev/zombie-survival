@@ -32,6 +32,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.gdx.game.utils.Constants.CAMERA_LERP;
+import static com.gdx.game.utils.Constants.DEBUG;
 import static com.gdx.game.utils.Constants.DIFFICULT_GAME;
 import static com.gdx.game.utils.Constants.GRAVITY;
 import static com.gdx.game.utils.Constants.SHARP_MOVEMENT;
@@ -93,7 +94,7 @@ public class PlayState extends GameState {
 
             batch.begin();
             bullets.forEach(bullet -> bullet.getSprite().draw(batch)); // Render bullets textures
-            items.forEach(item -> item.getRoundSprite().draw(batch)); // Render items on map
+            items.forEach(item -> item.getCircleSprite().draw(batch)); // Render items on map
             zombies.forEach(zombie -> zombie.getZombieAnimation().renderAnimation(batch)); // Render the zombies animations
             zombieShooters.forEach(zombie -> zombie.getZombieShooterAnimation().renderAnimation(batch)); // Render the zombieShooters animations
             player.render(); // Render the player animations
@@ -110,6 +111,8 @@ public class PlayState extends GameState {
     @Override
     public void update(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) Constants.IN_GAME_PAUSE = !Constants.IN_GAME_PAUSE;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) Constants.DEBUG = !Constants.DEBUG;
+        if (DEBUG) b2dr.render(world, camera.combined);
         if (Constants.DEAD) {
             gameOver.resetInputProcessor();
             gameOver.update(killCounter);

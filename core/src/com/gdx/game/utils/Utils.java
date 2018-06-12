@@ -56,7 +56,7 @@ public class Utils {
         }
     }
 
-    public static Optional<JSONObject> getTopResultJSON() {
+    public static Optional<JSONObject> getTopScoreJSON() {
         Optional<JSONArray> loadedGame = loadGameJSON();
         Object top = null;
 

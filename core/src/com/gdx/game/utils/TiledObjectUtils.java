@@ -130,7 +130,7 @@ public class TiledObjectUtils {
         }
 
         if (temp != null) {
-            temp.setSpritePosition(ellipse.x - temp.getRoundSprite().getWidth() / 2, ellipse.y - temp.getRoundSprite().getHeight() / 2);
+            temp.setCircleSpritePosition(ellipse.x - temp.getCircleSprite().getWidth() / 2, ellipse.y - temp.getCircleSprite().getHeight() / 2);
             state.getItems().add(temp);
         }
     }

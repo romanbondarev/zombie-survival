@@ -106,8 +106,8 @@ public class Hud {
                         /* Clicked on item in INVENTORY */
                         Item itemToRemove = inventory.getItem(slotID);
                         if (itemToRemove != null) {
-                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
+                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.removeItemFromInventory(itemToRemove);
                         }
@@ -116,8 +116,8 @@ public class Hud {
                         /* Clicked on item in TRAY */
                         Item itemToRemove = inventory.getTray()[slotID - 10];
                         if (itemToRemove != null) {
-                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
+                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.removeItemFromTray(itemToRemove);
                         }
@@ -125,8 +125,8 @@ public class Hud {
                         /* Clicked on helmet */
                         Item itemToRemove = inventory.getHelmetArmor();
                         if (itemToRemove != null) {
-                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
+                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.setHelmetArmor(null);
                         }
@@ -134,8 +134,8 @@ public class Hud {
                         /* Clicked on vest */
                         Item itemToRemove = inventory.getVestArmor();
                         if (itemToRemove != null) {
-                            itemToRemove.getRoundSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getRoundSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getRoundSprite().getHeight() / 2);
+                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.setVestArmor(null);
                         }
@@ -258,7 +258,7 @@ public class Hud {
     }
 
     private void selectorPositionUpdate() {
-        switch (inventory.getSelectedCellInt()) {
+        switch (inventory.getSelectedCellID()) {
             case 0:
                 selector.addAction(moveTo(stage.getWidth() - 234, 80, 0.05f));
                 break;
