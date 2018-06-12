@@ -48,6 +48,9 @@ public class PlayerAnimation {
     private boolean didKnife = false;
     private double degrees = 0;
 
+    /**
+     * Creates an animation for the player.
+     */
     public PlayerAnimation(Player player) {
         this.player = player;
         textureAtlasMeleeAttack = Application.assetManager.get("animation-assets/player/playerMeleeAttack.atlas", TextureAtlas.class);
@@ -63,6 +66,11 @@ public class PlayerAnimation {
         setAnimation(AnimationType.RIFLE_MOVE);
     }
 
+    /**
+     * Renders the animation.
+     *
+     * @param batch sprite batch of the game
+     */
     public void renderAnimation(SpriteBatch batch) {
         elapsedTime += Gdx.graphics.getDeltaTime();
         TextureAtlas.AtlasRegion keyframe = animation.getKeyFrame(elapsedTime, true);
@@ -78,6 +86,12 @@ public class PlayerAnimation {
                 1, 1, ((float) degrees));
     }
 
+    /**
+     * Updates the animation.
+     * Changes animations if necessary.
+     *
+     * @param degrees
+     */
     public void updateAnimation(double degrees) {
         if (currentAnimation.equals(AnimationType.RIFLE_RELOAD)) {
             /* RIFLE_RELOAD ANIMATION */
@@ -136,6 +150,9 @@ public class PlayerAnimation {
         this.degrees = degrees;
     }
 
+    /**
+     * Sets the current animation.
+     */
     public void setAnimation(AnimationType type) {
         float duration = 1f / 30f;
         Array<TextureAtlas.AtlasRegion> regions = null;
@@ -210,6 +227,9 @@ public class PlayerAnimation {
         }
     }
 
+    /**
+     * Chooses an animation accordingly to an item and action.
+     */
     public AnimationType chooseAnimation(Item item, AnimationType event) {
         if (item != null) {
             if (event.equals(AnimationType.SHOOT)) {
@@ -249,12 +269,18 @@ public class PlayerAnimation {
         return AnimationType.MELEE_MOVE;
     }
 
+    /**
+     * Resets all counters to zero.
+     */
     private void counterToZero() {
         shootTime = 0f;
         reloadTime = 0f;
         elapsedTime = 0f;
     }
 
+    /**
+     * Disposes loaded animation atlases.
+     */
     public void dispose() {
         textureAtlasMeleeAttack.dispose();
         textureAtlasMeleeMove.dispose();
@@ -268,11 +294,17 @@ public class PlayerAnimation {
         textureAtlasHandgunShoot.dispose();
     }
 
+    /**
+     * Resets shooting animation's variables.
+     */
     public void resetShooting() {
         isShooting = false;
         shootTime = Float.MAX_VALUE;
     }
 
+    /**
+     * Resets reloading animation's variables.
+     */
     public void resetReload() {
         isReloading = false;
     }
