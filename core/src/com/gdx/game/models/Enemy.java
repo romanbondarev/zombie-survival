@@ -32,6 +32,13 @@ public abstract class Enemy {
     Body body;
     World world;
 
+    /**
+     * Creates an enemy.
+     *
+     * @param gameState game state for an game world access
+     * @param x         initial x coordinate (world coordinates)
+     * @param y         inittal y coordinate (world coordinates)
+     */
     public Enemy(GameState gameState, float x, float y) {
         // Body definition
         this.world = ((PlayState) gameState).getWorld();
@@ -62,18 +69,30 @@ public abstract class Enemy {
 
     public abstract void update(Player player);
 
+    /**
+     * Reduces the enemy's health by damage amount.
+     */
     public void takeDamage(int damage) {
         HP -= damage;
     }
 
+    /**
+     * Gets the enemy's body.
+     */
     public Body getBody() {
         return body;
     }
 
+    /**
+     * Gets the enemy's position.
+     */
     public Vector2 getPosition() {
         return body.getPosition();
     }
 
+    /**
+     * Gets the enemy's health.
+     */
     public int getHP() {
         return HP;
     }

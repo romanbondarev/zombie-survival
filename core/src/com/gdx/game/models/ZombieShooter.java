@@ -7,8 +7,7 @@ import com.gdx.game.models.animations.ZombieShooterAnimation;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
 import com.gdx.game.utils.Constants;
-
-import static com.gdx.game.utils.Constants.PPM;
+import com.gdx.game.utils.WCC;
 
 public final class ZombieShooter extends Enemy {
     private int counter = 0;
@@ -21,6 +20,10 @@ public final class ZombieShooter extends Enemy {
         zombieShooterAnimation = new ZombieShooterAnimation(this);
     }
 
+    /**
+     * Updates the zombie's position relatively to the player's position.
+     * Damages player.
+     */
     @Override
     public void update(Player player) {
         double x = player.getPosition().x - this.getPosition().x;
@@ -34,7 +37,8 @@ public final class ZombieShooter extends Enemy {
             zombieShooterAnimation.setAnimation(ZombieShooterAnimation.AnimationType.IDLE);
         } else if (distanceInBetween < 10) {
             body.setLinearVelocity((float) (x / distanceInBetween) * 5, (float) (y / distanceInBetween) * 5);
-            if (distanceInBetween > 3.15) zombieShooterAnimation.setAnimation(ZombieShooterAnimation.AnimationType.MOVE);
+            if (distanceInBetween > 3.15)
+                zombieShooterAnimation.setAnimation(ZombieShooterAnimation.AnimationType.MOVE);
             if (trouble) {
                 if (one) {
                     body.setLinearVelocity(4f, -4f);
@@ -137,27 +141,39 @@ public final class ZombieShooter extends Enemy {
         }
     }
 
-    private void attackPlayer(Player player) {
-        double x = player.getPosition().x - this.getPosition().x;
-        double y = player.getPosition().y - this.getPosition().y;
+    /**
+     * Attacks the target if is in range.
+     */
+    private void attackPlayer(Player target) {
+        double x = target.getPosition().x - this.getPosition().x;
+        double y = target.getPosition().y - this.getPosition().y;
         distanceInBetween = Math.sqrt(x * x + y * y);
         counter++;
 
-        boolean canShoot = true;
-        for (Zombie zombie : ((PlayState) gameState).getZombies()) {
-            if (Intersector.intersectSegmentCircle(new Vector2(getPosition().x, getPosition().y), new Vector2(player.getPosition().x, player.getPosition().y), new Vector2(zombie.getPosition().x, zombie.getPosition().y), 25 / PPM)) {
-                canShoot = false;
-                break;
-            }
-        }
+        /* Check if there are no zombies on a shooters bullet path (prevent the murder of other zombies) */
+        boolean canShoot = ((PlayState) gameState).getZombies().stream().noneMatch(zombie -> Intersector.intersectSegmentCircle(
+                new Vector2(getPosition().x, getPosition().y),
+                new Vector2(target.getPosition().x, target.getPosition().y),
+                new Vector2(zombie.getPosition().x, zombie.getPosition().y),
+                WCC.pixelsToWorld(25)));
+
         if (canShoot && counter >= 20 + random) {
-            ((PlayState) gameState).getBullets().add(new Bullet(world, new Vector2(getPosition().x, getPosition().y), new Vector2(player.getPosition().x,
-                    player.getPosition().y), Constants.shooterDamage));
+            /* Time has passed and no zombies on a path */
+            ((PlayState) gameState).getBullets().add(
+                    new Bullet(
+                            world,
+                            new Vector2(getPosition().x, getPosition().y),
+                            new Vector2(target.getPosition().x, target.getPosition().y),
+                            Constants.shooterDamage)
+            );
             random = r.nextInt(30);
             counter = 0;
         }
     }
 
+    /**
+     * Get the zombie shooter's animation.
+     */
     public ZombieShooterAnimation getZombieShooterAnimation() {
         return zombieShooterAnimation;
     }

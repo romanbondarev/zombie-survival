@@ -7,11 +7,18 @@ import com.gdx.game.utils.Constants;
 public final class Zombie extends Enemy {
     private ZombieAnimation zombieAnimation;
 
+    /**
+     * Creates a zombie with initial x and y position (world coordinates).
+     */
     public Zombie(GameState gameState, float x, float y) {
         super(gameState, x, y);
         zombieAnimation = new ZombieAnimation(this);
     }
 
+    /**
+     * Updates the zombie's position relatively to the player's position.
+     * Damages player.
+     */
     @Override
     public void update(Player player) {
         double x = player.getPosition().x - this.getPosition().x;
@@ -132,6 +139,9 @@ public final class Zombie extends Enemy {
         }
     }
 
+    /**
+     * Gets the zombie's animation.
+     */
     public ZombieAnimation getZombieAnimation() {
         return zombieAnimation;
     }

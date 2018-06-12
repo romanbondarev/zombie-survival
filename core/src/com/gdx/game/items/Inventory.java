@@ -8,6 +8,7 @@ import com.gdx.game.utils.Constants;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 public class Inventory {
 
@@ -16,31 +17,44 @@ public class Inventory {
     }
 
     private Player player;
-    private Armor helmetArmor;
-    private Armor vestArmor;
+    private Armor helmetArmorCell;
+    private Armor vestArmorCell;
 
     private Item[] inventory;
     private Item[] tray;
 
-    private int selectedCellInt = 0;
+    private int selectedCellID = 0;
 
+    /**
+     * Creates an inventory.
+     *
+     * @param player whom inventory would be.
+     */
     public Inventory(Player player) {
         this.player = player;
         tray = new Item[4];
         inventory = new Item[Constants.INVENTORY_SIZE];
     }
 
+    /**
+     * Executes the action with the item selected from the inventory.
+     * <p>
+     * Weapon: sets a weapon into selected cell (if cell contains a weapon, returns it back to the inventory)<br>
+     * Ammo: loads a full ammo into the first gun found in the tray (gun and ammo must be compatible)<br>
+     * Armor: sets an armor of its type into the helmet or vest armor cell.<br>
+     * First aid kit: uses a kit (heals player) and removes it from the inventory
+     */
     public void selectItem(Item item) {
         /* ARMOR */
         if (item instanceof Armor) {
             if (((Armor) item).getArmorType().equals(Armor.ArmorType.HEAD)) {
                 removeItemFromInventory(item);
-                returnItemToInventory(helmetArmor);
+                returnItemToInventory(helmetArmorCell);
                 setHelmetArmor(((Armor) item));
             }
             if (((Armor) item).getArmorType().equals(Armor.ArmorType.BODY)) {
                 removeItemFromInventory(item);
-                returnItemToInventory(vestArmor);
+                returnItemToInventory(vestArmorCell);
                 setVestArmor(((Armor) item));
             }
         }
@@ -64,27 +78,28 @@ public class Inventory {
             }
         }
 
-        /* MEDKIT */
+        /* FIRST AID KIT */
         if (item instanceof MedKit) {
             ((MedKit) item).heal(player);
             removeItemFromInventory(item);
         }
     }
 
+    /**
+     * Returns the item back to the inventory (enough space is a must)
+     *
+     * @param item item to return
+     */
     public void returnItemToInventory(Item item) {
-        boolean canReturn = false;
-        for (Item invItem : inventory) {
-            if (invItem == null) canReturn = true;
-        }
-
-        if (canReturn) {
+        if (isEmpty()) {
+            // Inventory is not full
             if (item instanceof Armor) {
                 if (((Armor) item).getArmorType().equals(Armor.ArmorType.HEAD)) {
-                    helmetArmor = null;
+                    helmetArmorCell = null;
                     addItemToInventory(item);
                 }
                 if (((Armor) item).getArmorType().equals(Armor.ArmorType.BODY)) {
-                    vestArmor = null;
+                    vestArmorCell = null;
                     addItemToInventory(item);
                 }
             }
@@ -95,6 +110,11 @@ public class Inventory {
         }
     }
 
+    /**
+     * Adds the item to the inventory
+     *
+     * @param item item to add
+     */
     public void addItemToInventory(Item item) {
         for (int i = 0; i < inventory.length; i++) {
             if (inventory[i] == null) {
@@ -104,6 +124,12 @@ public class Inventory {
         }
     }
 
+    /**
+     * Deletes the item from the inventory
+     *
+     * @param item item to delete
+     * @return deleted item for further actions with it, returns null if no such item is found in the inventory
+     */
     public Item removeItemFromInventory(Item item) {
         for (int i = 0; i < inventory.length; i++) {
             if (inventory[i] == item) {
@@ -114,6 +140,12 @@ public class Inventory {
         return null;
     }
 
+    /**
+     * Deletes the item from the tray.
+     *
+     * @param item item to delete
+     * @return deleted item for further actions with it, returns null if no such item is found in the tray
+     */
     public Item removeItemFromTray(Item item) {
         for (int i = 0; i < tray.length; i++) {
             if (tray[i] == item) {
@@ -124,67 +156,107 @@ public class Inventory {
         return null;
     }
 
+    /**
+     * Sets the item to the tray cell that is selected.
+     */
     public void setSelectedItem(Item item) {
-        tray[selectedCellInt] = item;
+        tray[selectedCellID] = item;
     }
 
+    /**
+     * Changes the selected cell id.
+     *
+     * @param direction NEXT - goes right, PREVIOUS - goes left
+     */
     public void scrollTray(Direction direction) {
         switch (direction) {
             case NEXT:
-                if (selectedCellInt < 3) selectedCellInt++;
-                else selectedCellInt = 0;
+                if (selectedCellID < 3) selectedCellID++;
+                else selectedCellID = 0;
                 break;
             case PREVIOUS:
-                if (selectedCellInt > 0) selectedCellInt--;
-                else selectedCellInt = 3;
+                if (selectedCellID > 0) selectedCellID--;
+                else selectedCellID = 3;
                 break;
         }
     }
 
+    /**
+     * Gets the item from the inventory by its index.
+     */
     public Item getItem(int number) {
         return number < inventory.length ? getInventory().get(number) : null;
     }
 
-    public Armor getVestArmor() {
-        return vestArmor;
-    }
-
-    public Armor getHelmetArmor() {
-        return helmetArmor;
-    }
-
+    /**
+     * Gets the inventory as a list.
+     */
     public List<Item> getInventory() {
         return Arrays.asList(inventory);
     }
 
+    /**
+     * Gets the tray as an array.
+     */
     public Item[] getTray() {
         return tray;
     }
 
+    /**
+     * Sets currently selected cell id.
+     *
+     * @param selectedCellID id to be set
+     */
+    public void setSelectedCellID(int selectedCellID) {
+        this.selectedCellID = selectedCellID;
+    }
+
+    /**
+     * Gets currently selected cell id.
+     */
+    public int getSelectedCellID() {
+        return selectedCellID;
+    }
+
+    /**
+     * Gets the item that is currently selected.
+     */
     public Item getSelectedCellItem() {
-        return tray[getSelectedCellInt()];
+        return tray[getSelectedCellID()];
     }
 
-    public int getSelectedCellInt() {
-        return selectedCellInt;
-    }
-
-    public void setSelectedCellInt(int selectedCellInt) {
-        this.selectedCellInt = selectedCellInt;
-    }
-
+    /**
+     * Sets the helmet into the helmet armor cell.
+     */
     public void setHelmetArmor(Armor helmetArmor) {
-        this.helmetArmor = helmetArmor;
+        this.helmetArmorCell = helmetArmor;
     }
 
+    /**
+     * Gets the currently worn helmet.
+     */
+    public Armor getHelmetArmor() {
+        return helmetArmorCell;
+    }
+
+    /**
+     * Sets the vest into the vest armor cell.
+     */
     public void setVestArmor(Armor vestArmor) {
-        this.vestArmor = vestArmor;
+        this.vestArmorCell = vestArmor;
     }
 
+    /**
+     * Gets the currently worn vest.
+     */
+    public Armor getVestArmor() {
+        return vestArmorCell;
+    }
+
+    /**
+     * Checks if the inventory's empty
+     */
     public boolean isEmpty() {
-        for (Item item : inventory) {
-            if (item == null) return false;
-        }
-        return true;
+        return Arrays.stream(inventory).noneMatch(Objects::isNull);
     }
 }
