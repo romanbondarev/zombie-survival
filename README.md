@@ -6,6 +6,7 @@
 - If you kill a zombie, it will spawn again in some time. *Note: every zombie has it's own speed.*
 - You can use a **handgun**, **knife** and **rifle** to kill zombies.
 - At the beginning you will have a rifle in your hands.
+- Press **R** to reload a weapon.
 - There are some items spread across the map (bullets, rifles and handguns with some bullets already loaded, first aid kits and armor). You can pick up them by pressing **F** when you are staying within area of the item (circle). Then if there is enough space in the inventory item will be added to the inventory. Items will respawn again after certain amount of zombies killed.
 - To open inventory you either:
     - press **E**
