@@ -12,7 +12,6 @@
     - click on **+** with mouse **RIGHT BUTTON** on the right-top of the screen of the game
 - You can select item from inventory and put it into tray by clicking on item with mouse **RIGHT BUTTON**, you have to have a slot selected before (select by pressing numbers 1-4).
 - To drop an item you need to click on it with mouse **RIGHT BUTTON** and **LEFT-CONTROL** pressed at the same time.
-- When you HP is 0 you is dead and you will be directed to the screen with killed zombie score and options: play again, go to the main menu or quit game, as in the pause screen.
-
+- The most important is to stay alive and kill as many zombies as possible.
 
 [Download game](https://github.com/romanbondarev/zombie-survival/blob/master/Zombie%20Survival.jar)
