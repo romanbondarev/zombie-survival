@@ -91,7 +91,7 @@ public class Inventory {
      * @param item item to return
      */
     public void returnItemToInventory(Item item) {
-        if (isEmpty()) {
+        if (hasSpace()) {
             // Inventory is not full
             if (item instanceof Armor) {
                 if (((Armor) item).getArmorType().equals(Armor.ArmorType.HEAD)) {
@@ -254,9 +254,9 @@ public class Inventory {
     }
 
     /**
-     * Checks if the inventory's empty
+     * Checks if the inventory has space.
      */
-    public boolean isEmpty() {
-        return Arrays.stream(inventory).noneMatch(Objects::isNull);
+    public boolean hasSpace() {
+        return Arrays.stream(inventory).anyMatch(Objects::isNull);
     }
 }
