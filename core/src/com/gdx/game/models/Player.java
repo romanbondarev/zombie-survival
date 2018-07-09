@@ -9,10 +9,13 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
+import com.gdx.game.managers.Sounds;
 import com.gdx.game.items.Inventory;
 import com.gdx.game.items.Item;
+import com.gdx.game.items.weapons.Handgun;
 import com.gdx.game.items.weapons.Rifle;
 import com.gdx.game.items.weapons.Weapon;
+import com.gdx.game.items.weapons.ammo.HandgunAmmo;
 import com.gdx.game.items.weapons.ammo.RifleAmmo;
 import com.gdx.game.models.animations.PlayerAnimation;
 import com.gdx.game.states.GameState;
@@ -75,8 +78,15 @@ public class Player {
         Rifle rifle = new Rifle("Riffle");
         rifle.loadAmmo(new RifleAmmo(50, "AMMO"));
         rifle.reload();
+        Handgun handgun = new Handgun("Handgun");
+        handgun.loadAmmo(new HandgunAmmo(50, "AMMO"));
+        handgun.reload();
         inventory.addItemToInventory(rifle);
         inventory.selectItem(rifle);
+        inventory.setSelectedCellID(1);
+        inventory.addItemToInventory(handgun);
+        inventory.selectItem(handgun);
+        inventory.setSelectedCellID(0);
 
         animation = new PlayerAnimation(this);
     }
@@ -141,10 +151,10 @@ public class Player {
         }
 
         if (shootQueue && (animation.didShoot() || animation.didKnife()) && singleShoot) {
-            if (item != null && item instanceof Rifle) {
+            if (item instanceof Rifle) {
                 ((Weapon) item).shoot((gameState), camera, this);
                 shootQueue = false;
-            } else if (item != null && item instanceof Weapon) {
+            } else if (item instanceof Weapon) {
                 ((Weapon) item).shoot((gameState), camera, this);
                 singleShoot = false;
             } else if (item == null) {
@@ -205,7 +215,8 @@ public class Player {
                 double distanceInBetween = Math.sqrt(x * x + y * y);
 
                 if (distanceInBetween < 46) {
-                    if (!inventory.isEmpty()) {
+                    if (inventory.hasSpace()) {
+                        Sounds.itemPickUp().play();
                         System.out.println("PICKED UP");
                         ((PlayState) gameState).getItems().remove(item1);
                         inventory.addItemToInventory(item1);
@@ -274,6 +285,7 @@ public class Player {
     }
 
     public void takeDamage(int damage) {
+        damage = 0;
         int helmetDamageAbsorption;
         int vestDamageAbsorption;
 
