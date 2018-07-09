@@ -36,7 +36,7 @@ import static com.gdx.game.utils.Constants.MENU_ON;
 import static com.gdx.game.utils.Constants.SCALE;
 import static com.gdx.game.utils.Constants.SHARP_MOVEMENT;
 
-public class Settings {
+public class Settings implements Screen {
     private GameStateManager gameStateManager;
     private Application application;
     private ShapeRenderer shapeRenderer;
@@ -181,6 +181,7 @@ public class Settings {
         stage.addActor(selector3);
     }
 
+    @Override
     public void update() {
         stage.act();
         if (!disolve) {
@@ -192,6 +193,7 @@ public class Settings {
         }
     }
 
+    @Override
     public void render() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -206,10 +208,12 @@ public class Settings {
         stage.draw();
     }
 
+    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(((int) (width * SCALE)), ((int) (height * SCALE)));
     }
 
+    @Override
     public void dispose() {
         shapeRenderer.dispose();
         settingsTex.dispose();
@@ -221,6 +225,7 @@ public class Settings {
         stage.dispose();
     }
 
+    @Override
     public void resetInputProcessor() {
         Gdx.input.setInputProcessor(stage);
     }

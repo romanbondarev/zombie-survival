@@ -32,7 +32,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-public class Menu {
+public class Menu implements Screen {
     private GameStateManager gameStateManager;
     private Application application;
     private Stage stage;
@@ -140,6 +140,7 @@ public class Menu {
         ));
     }
 
+    @Override
     public void update() {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             gameStateManager.setState(GameStateManager.State.LOADING, true);
@@ -151,6 +152,7 @@ public class Menu {
         stage.act();
     }
 
+    @Override
     public void render() {
         Gdx.gl.glEnable(GL20.GL_BLEND);
         Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
@@ -170,12 +172,12 @@ public class Menu {
         shapeRenderer.end();
     }
 
-
+    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(((int) (width * Constants.SCALE)), ((int) (height * Constants.SCALE)));
     }
 
-
+    @Override
     public void dispose() {
         shapeRenderer.dispose();
         playTex.dispose();
@@ -185,6 +187,7 @@ public class Menu {
         stage.dispose();
     }
 
+    @Override
     public void resetInputProcessor() {
         Gdx.input.setInputProcessor(stage);
     }

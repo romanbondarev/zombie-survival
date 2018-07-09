@@ -32,7 +32,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-public class Pause {
+public class Pause implements Screen {
     private Application application;
     private Stage stage;
     private Camera camera;
@@ -51,7 +51,7 @@ public class Pause {
     private Texture menuTex;
     private Texture quitTex;
 
-    private int killCounter= 0;
+    private int killCounter = 0;
 
 
     public Pause(Application application) {
@@ -155,6 +155,12 @@ public class Pause {
         verticalGroup.setPosition(stage.getWidth() / 2, stage.getHeight() / 2 + verticalGroup.getPrefHeight() / 2);
     }
 
+    @Deprecated
+    @Override
+    public void update() {
+        update(0);
+    }
+
     public void update(int amount) {
         resetInputProcessor();
         killCounter = amount;
@@ -162,6 +168,7 @@ public class Pause {
         stage.act();
     }
 
+    @Override
     public void render() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(0, 0, stage.getWidth(), stage.getHeight(),
@@ -174,6 +181,8 @@ public class Pause {
         stage.draw();
     }
 
+
+    @Override
     public void dispose() {
         stage.dispose();
         segoeFont.dispose();
@@ -182,10 +191,12 @@ public class Pause {
         quitTex.dispose();
     }
 
+    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(((int) (width * Constants.SCALE)), ((int) (height * Constants.SCALE)));
     }
 
+    @Override
     public void resetInputProcessor() {
         Gdx.input.setInputProcessor(stage);
     }

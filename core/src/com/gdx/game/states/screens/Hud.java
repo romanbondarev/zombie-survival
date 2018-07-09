@@ -35,7 +35,7 @@ import static com.gdx.game.utils.Constants.INVENTORY_SIZE;
 import static com.gdx.game.utils.Constants.SCALE;
 import static com.gdx.game.utils.WCC.worldToPixels;
 
-public class Hud {
+public class Hud implements Screen {
     private Application application;
     private Player player;
     private Stage stage;
@@ -233,6 +233,7 @@ public class Hud {
         stage.addActor(helmetAbsorbLabel);
     }
 
+    @Override
     public void update() {
         resetInputProcessor();
         stage.act();
@@ -274,6 +275,7 @@ public class Hud {
         }
     }
 
+    @Override
     public void render() {
         update();
         float progress = player.getAnimation().getReloadTime() * 50;
@@ -305,10 +307,12 @@ public class Hud {
         return (item != null) ? item.getSquareSprite().getTexture() : backgroundTex;
     }
 
+    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(((int) (width * SCALE)), ((int) (height * SCALE)));
     }
 
+    @Override
     public void dispose() {
         stage.dispose();
         backgroundTex.dispose();
@@ -330,6 +334,7 @@ public class Hud {
         }
     }
 
+    @Override
     public void resetInputProcessor() {
         Gdx.input.setInputProcessor(stage);
     }

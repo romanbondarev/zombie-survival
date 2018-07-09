@@ -31,7 +31,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-public class GameOver {
+public class GameOver implements Screen {
     private Application application;
     private Stage stage;
     private Camera camera;
@@ -149,11 +149,8 @@ public class GameOver {
         verticalGroup.setPosition(stage.getWidth() / 2, stage.getHeight() / 2 + verticalGroup.getPrefHeight() / 2);
     }
 
-    public void update(int amount) {
-        counter.setText("GAME OVER! ZOMBIES KILLED: " + amount);
-        stage.act();
-    }
 
+    @Override
     public void render() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(0, 0, stage.getWidth(), stage.getHeight(),
@@ -166,7 +163,18 @@ public class GameOver {
         stage.draw();
     }
 
+    @Deprecated
+    @Override
+    public void update() {
+        update(0);
+    }
 
+    public void update(int amount) {
+        counter.setText("GAME OVER! ZOMBIES KILLED: " + amount);
+        stage.act();
+    }
+
+    @Override
     public void dispose() {
         shapeRenderer.dispose();
         segoeFont.dispose();
@@ -176,10 +184,12 @@ public class GameOver {
         stage.dispose();
     }
 
+    @Override
     public void resize(int width, int height) {
         stage.getViewport().update(((int) (width * Constants.SCALE)), ((int) (height * Constants.SCALE)));
     }
 
+    @Override
     public void resetInputProcessor() {
         Gdx.input.setInputProcessor(stage);
     }
