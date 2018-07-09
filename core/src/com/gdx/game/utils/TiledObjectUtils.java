@@ -12,23 +12,14 @@ import com.badlogic.gdx.physics.box2d.ChainShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.Shape;
 import com.badlogic.gdx.physics.box2d.World;
-import com.gdx.game.items.Item;
-import com.gdx.game.items.MedKit;
-import com.gdx.game.items.armor.Helmet;
-import com.gdx.game.items.armor.Vest;
-import com.gdx.game.items.weapons.Handgun;
-import com.gdx.game.items.weapons.Rifle;
-import com.gdx.game.items.weapons.ammo.HandgunAmmo;
-import com.gdx.game.items.weapons.ammo.RifleAmmo;
 import com.gdx.game.models.Player;
 import com.gdx.game.models.Zombie;
 import com.gdx.game.models.ZombieShooter;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
+import com.gdx.game.utils.spawners.ItemSpawner;
 import com.gdx.game.utils.spawners.SpawnShooter;
 import com.gdx.game.utils.spawners.SpawnZombie;
-
-import java.util.Random;
 
 import static com.gdx.game.utils.Constants.PPM;
 
@@ -36,7 +27,7 @@ public class TiledObjectUtils {
     public static void parseTiledItemLayer(GameState state, MapObjects mapObjects) {
         for (MapObject object : mapObjects) {
             if (object.getName() != null && object.getName().split("\\.")[0].equals("Item")) {
-                createItem(((PlayState) state), ((PlayState) state).getWorld(), ((EllipseMapObject) object));
+                createItem(((PlayState) state), ((EllipseMapObject) object));
             }
         }
     }
@@ -95,44 +86,9 @@ public class TiledObjectUtils {
         }
     }
 
-    private static void createItem(PlayState state, World world, EllipseMapObject mapObject) {
+    private static void createItem(PlayState state, EllipseMapObject mapObject) {
         Ellipse ellipse = mapObject.getEllipse();
-
-        Random r = new Random();
-        Item temp = null;
-
-        switch (mapObject.getName().split("\\.")[1]) {
-            case "rifle":
-                temp = new Rifle("RIFLE");
-                ((Rifle) temp).loadAmmo(new RifleAmmo(15 + r.nextInt(15), "RIFFLE AMMO"));
-                ((Rifle) temp).reload();
-                break;
-            case "handgun":
-                temp = new Handgun("HANDGUN");
-                ((Handgun) temp).loadAmmo(new HandgunAmmo(15 + r.nextInt(15), "HANDGUN AMMO"));
-                ((Handgun) temp).reload();
-                break;
-            case "rifleammo":
-                temp = new RifleAmmo(10 + 5 * r.nextInt(6), "RIFLE AMMO");
-                break;
-            case "handgunammo":
-                temp = new HandgunAmmo(10 + 5 * r.nextInt(6), "HANDGUN AMMO");
-                break;
-            case "medkit":
-                temp = new MedKit(25);
-                break;
-            case "helmet":
-                temp = new Helmet("HELMET", 1 + r.nextInt(3), 20 + r.nextInt(30));
-                break;
-            case "vest":
-                temp = new Vest("BULLETPROOF VEST", 1 + r.nextInt(3), 20 + r.nextInt(30));
-                break;
-        }
-
-        if (temp != null) {
-            temp.setCircleSpritePosition(ellipse.x - temp.getCircleSprite().getWidth() / 2, ellipse.y - temp.getCircleSprite().getHeight() / 2);
-            state.getItems().add(temp);
-        }
+        state.getItemSpawners().add(new ItemSpawner(state, mapObject.getName().split("\\.")[1], ellipse.x, ellipse.y));
     }
 
     private static ChainShape createPolyline(PolylineMapObject polyline) {
