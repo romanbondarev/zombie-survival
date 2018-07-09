@@ -3,6 +3,8 @@ package com.gdx.game.states;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.assets.loaders.FileHandleResolver;
 import com.badlogic.gdx.assets.loaders.resolvers.InternalFileHandleResolver;
+import com.badlogic.gdx.audio.Music;
+import com.badlogic.gdx.audio.Sound;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.Texture;
@@ -109,6 +111,12 @@ public class LoadingState extends GameState {
     }
 
     private void queueAssets() {
+        Application.assetManager.load("sound/effects/rifleSingleShot.wav", Sound.class);
+        Application.assetManager.load("sound/effects/handgunSingleShot.wav", Sound.class);
+        Application.assetManager.load("sound/effects/itemPickUp.mp3", Sound.class);
+        Application.assetManager.load("sound/effects/weaponReload.mp3", Music.class);
+        Application.assetManager.load("sound/music/backgroundMusic.mp3", Music.class);
+
         /* Player animations */
         Application.assetManager.load("animation-assets/player/playerRifleMove.atlas", TextureAtlas.class);
         Application.assetManager.load("animation-assets/player/playerRifleReload.atlas", TextureAtlas.class);
@@ -176,7 +184,7 @@ public class LoadingState extends GameState {
         agencyFB.fontFileName = "agency-fb.ttf";
         agencyFB.fontParameters.size = 30;
         agencyFB.fontParameters.color = Color.WHITE;
-        Application.assetManager.load("agency-fb.ttf", BitmapFont.class, segoeBlack);
+        Application.assetManager.load("agency-fb.ttf", BitmapFont.class, agencyFB);
     }
 
     @Override
