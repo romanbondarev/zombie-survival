@@ -2,6 +2,7 @@ package com.gdx.game.states;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
@@ -9,13 +10,13 @@ import com.badlogic.gdx.maps.tiled.TiledMap;
 import com.badlogic.gdx.maps.tiled.renderers.OrthogonalTiledMapRenderer;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.math.Vector3;
-import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.physics.box2d.World;
 import com.gdx.game.Application;
 import com.gdx.game.handlers.GameContactListener;
 import com.gdx.game.items.Item;
 import com.gdx.game.items.weapons.Bullet;
 import com.gdx.game.managers.GameStateManager;
+import com.gdx.game.managers.Sounds;
 import com.gdx.game.models.Player;
 import com.gdx.game.models.Zombie;
 import com.gdx.game.models.ZombieShooter;
@@ -24,19 +25,19 @@ import com.gdx.game.states.screens.Hud;
 import com.gdx.game.states.screens.Pause;
 import com.gdx.game.utils.CameraStyles;
 import com.gdx.game.utils.Constants;
+import com.gdx.game.utils.Debugger;
 import com.gdx.game.utils.FrameRate;
 import com.gdx.game.utils.TMLP;
+import com.gdx.game.utils.spawners.ItemSpawner;
 import com.gdx.game.utils.spawners.Spawner;
 
 import java.util.LinkedList;
 import java.util.List;
 
 import static com.gdx.game.utils.Constants.CAMERA_LERP;
-import static com.gdx.game.utils.Constants.DEBUG;
 import static com.gdx.game.utils.Constants.DIFFICULT_GAME;
 import static com.gdx.game.utils.Constants.GRAVITY;
 import static com.gdx.game.utils.Constants.SHARP_MOVEMENT;
-import static com.gdx.game.utils.WCC.getPPM;
 import static com.gdx.game.utils.WCC.worldToPixels;
 
 public class PlayState extends GameState {
@@ -46,8 +47,8 @@ public class PlayState extends GameState {
     private Hud hud;
     private Pause pause;
     private GameOver gameOver;
+    private Debugger debugger;
 
-    private Box2DDebugRenderer b2dr;
     private World world;
     private Player player;
     private List<Bullet> bullets = new LinkedList<>();
@@ -55,22 +56,19 @@ public class PlayState extends GameState {
     private List<ZombieShooter> zombieShooters = new LinkedList<>();
     private List<Spawner> spawners = new LinkedList<>();
     private List<Item> items = new LinkedList<>();
+    private List<ItemSpawner> itemSpawners = new LinkedList<>();
 
     private int levelWidth;
     private int levelHeight;
     private int killCounter = 0;
-    private boolean respawn = true;
 
     public PlayState(GameStateManager gameStateManager, GameStateManager.State state) {
         super(gameStateManager, state);
         world = new World(new Vector2(0, GRAVITY), false);
-        b2dr = new Box2DDebugRenderer(); // Box2D renderer
         world.setContactListener(new GameContactListener());
-
         player = new Player(this, 600, 1000, 100);
 
-        tiledMap = DIFFICULT_GAME ? Application.assetManager.get("map/mapDifficult.tmx", TiledMap.class)
-                : Application.assetManager.get("map/map.tmx", TiledMap.class);
+        tiledMap = DIFFICULT_GAME ? Application.assetManager.get("map/mapDifficult.tmx", TiledMap.class) : Application.assetManager.get("map/map.tmx", TiledMap.class);
         levelHeight = tiledMap.getProperties().get("height", Integer.class);
         levelWidth = tiledMap.getProperties().get("width", Integer.class);
         mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
@@ -82,6 +80,12 @@ public class PlayState extends GameState {
         hud = new Hud(application, this, player);
         pause = new Pause(application);
         gameOver = new GameOver(application);
+        debugger = new Debugger(this);
+
+        Music music = Sounds.backgroundMusic();
+        music.setVolume(0.1f);
+        music.setLooping(true);
+        music.play();
     }
 
     @Override
@@ -101,7 +105,7 @@ public class PlayState extends GameState {
             batch.end();
 
             hud.render(); // Hud
-            if (Constants.DEBUG) b2dr.render(world, camera.combined.scl(getPPM()));
+            if (Constants.DEBUG) debugger.render();
         } else {
             pause.render();
         }
@@ -112,7 +116,6 @@ public class PlayState extends GameState {
     public void update(float delta) {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ESCAPE)) Constants.IN_GAME_PAUSE = !Constants.IN_GAME_PAUSE;
         if (Gdx.input.isKeyJustPressed(Input.Keys.F3)) Constants.DEBUG = !Constants.DEBUG;
-        if (DEBUG) b2dr.render(world, camera.combined);
         if (Constants.DEAD) {
             gameOver.resetInputProcessor();
             gameOver.update(killCounter);
@@ -121,33 +124,25 @@ public class PlayState extends GameState {
             world.step(1 / 60f, 6, 2);
             bullets.forEach(Bullet::update); // Update the position of each bullet
             zombies.forEach(zombie -> zombie.update(player)); // Update the position of each zombie
-            zombieShooters.forEach(shooter -> shooter.update(player)); // Update the position of each zombieShooters
+            zombieShooters.forEach(shooter -> shooter.update(player)); // Update the position of each zombieShooter
             items.forEach(item -> item.rotateSprite(-1)); // Item rotation
-            spawners.forEach(Spawner::update); // Updates the spawner respawn time
+            itemSpawners.forEach(ItemSpawner::update); // Update the spawner's item respawn time
+            spawners.forEach(Spawner::update); // Update the spawner's zombie respawn time
 
             inputUpdate(); // Key press events
             cameraUpdate(); // Updates the position of camera
             objectDeletion(); // Delete collided bullets or dead zombies
-
-            /* Item respawn */
-            if (killCounter % Constants.ITEM_RESPAWN_TIME == 0 && respawn) {
-                respawn = false;
-                items.clear();
-                TMLP.parserMapItems(this, tiledMap, "inventory-items"); // Map items parser
-            } else if (killCounter % Constants.ITEM_RESPAWN_TIME != 0) {
-                respawn = true;
-            }
 
             mapRenderer.setView(camera);
             batch.setProjectionMatrix(camera.combined);
         } else {
             pause.update(killCounter);
         }
-        frameRate.update(); // FPS display
+        frameRate.update(); // FPS render
     }
 
     private void objectDeletion() {
-        // Bullet deletion
+        /* Bullet deletion */
         for (Bullet bullet : new LinkedList<>(bullets)) {
             if (bullet.getBody().getUserData() != null && (((Bullet) bullet.getBody().getUserData()).isCanDelete())) {
                 world.destroyBody(bullet.getBody());
@@ -155,7 +150,7 @@ public class PlayState extends GameState {
             }
         }
 
-        // Zombie deletion and killing
+        /* Zombie deletion and killing */
         for (Zombie zombie : new LinkedList<>(zombies)) {
             if (zombie.getHP() <= 0) {
                 world.destroyBody(zombie.getBody());
@@ -164,7 +159,7 @@ public class PlayState extends GameState {
             }
         }
 
-        // ZombieShooter deletion and killing
+        /* ZombieShooter deletion and killing */
         for (ZombieShooter zombieShooter : new LinkedList<>(zombieShooters)) {
             if (zombieShooter.getHP() <= 0) {
                 world.destroyBody(zombieShooter.getBody());
@@ -189,15 +184,9 @@ public class PlayState extends GameState {
     }
 
     private void inputUpdate() {
-        player.update(); // Player
-
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) {
-            SHARP_MOVEMENT = !SHARP_MOVEMENT;
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) {
-            CAMERA_LERP = !CAMERA_LERP;
-        }
-
+        player.update();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) SHARP_MOVEMENT = !SHARP_MOVEMENT;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) CAMERA_LERP = !CAMERA_LERP;
     }
 
     @Override
@@ -215,7 +204,7 @@ public class PlayState extends GameState {
         frameRate.dispose();
         hud.dispose();
         gameOver.dispose();
-        b2dr.dispose();
+        debugger.dispose();
         world.dispose();
     }
 
@@ -257,5 +246,17 @@ public class PlayState extends GameState {
 
     public List<Spawner> getSpawners() {
         return spawners;
+    }
+
+    public List<ItemSpawner> getItemSpawners() {
+        return itemSpawners;
+    }
+
+    public Player getPlayer() {
+        return player;
+    }
+
+    public int getKillCounter() {
+        return killCounter;
     }
 }
