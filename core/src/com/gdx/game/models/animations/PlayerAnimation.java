@@ -1,11 +1,13 @@
 package com.gdx.game.models.animations;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.graphics.g2d.Animation;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.gdx.game.Application;
+import com.gdx.game.managers.Sounds;
 import com.gdx.game.items.Item;
 import com.gdx.game.items.weapons.Weapon;
 import com.gdx.game.models.Player;
@@ -95,8 +97,9 @@ public class PlayerAnimation {
     public void updateAnimation(double degrees) {
         if (currentAnimation.equals(AnimationType.RIFLE_RELOAD)) {
             /* RIFLE_RELOAD ANIMATION */
+            Music sound = Sounds.weaponReload();
+            if (!sound.isPlaying()) sound.play();
             reloadTime += 0.1f;
-            System.out.println(reloadTime);
             isReloading = true;
             if (reloadTime > 4f) {
                 didReload = true;
@@ -106,6 +109,8 @@ public class PlayerAnimation {
             }
         } else if (currentAnimation.equals(AnimationType.HANDGUN_RELOAD)) {
             /* HANDGUN_RELOAD ANIMATION */
+            Music sound = Sounds.weaponReload();
+            if (!sound.isPlaying()) sound.play();
             reloadTime += 0.1f;
             isReloading = true;
             if (reloadTime > 3f) {
@@ -130,7 +135,8 @@ public class PlayerAnimation {
             /* RIFLE_SHOOT ANIMATION */
             shootTime += 0.1f;
             isShooting = true;
-            if (shootTime > 1f) {
+            if (shootTime > 0.5f) {
+                Sounds.rifleSingleShot().play();
                 didShoot = true;
                 isShooting = false;
                 setAnimation(AnimationType.RIFLE_MOVE);
@@ -141,6 +147,7 @@ public class PlayerAnimation {
             shootTime += 0.1f;
             isShooting = true;
             if (shootTime > 1f) {
+                Sounds.handgunSingleShot().play();
                 didShoot = true;
                 isShooting = false;
                 setAnimation(AnimationType.HANDGUN_MOVE);
