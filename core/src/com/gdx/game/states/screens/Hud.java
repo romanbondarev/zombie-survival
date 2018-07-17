@@ -102,26 +102,7 @@ public class Hud implements Screen {
             public void clicked(InputEvent event, float x, float y) {
                 int slotID = ((HudInventoryImage) event.getTarget()).getId();
                 if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
-                    if (slotID < 10) {
-                        /* Clicked on item in INVENTORY */
-                        Item itemToRemove = inventory.getItem(slotID);
-                        if (itemToRemove != null) {
-                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
-                            ((PlayState) state).getItems().add(itemToRemove);
-                            inventory.removeItemFromInventory(itemToRemove);
-                        }
-
-                    } else if (slotID < 20) {
-                        /* Clicked on item in TRAY */
-                        Item itemToRemove = inventory.getTray()[slotID - 10];
-                        if (itemToRemove != null) {
-                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
-                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
-                            ((PlayState) state).getItems().add(itemToRemove);
-                            inventory.removeItemFromTray(itemToRemove);
-                        }
-                    } else if (slotID == 20) {
+                    if (slotID == -2) {
                         /* Clicked on helmet */
                         Item itemToRemove = inventory.getHelmetArmor();
                         if (itemToRemove != null) {
@@ -130,7 +111,7 @@ public class Hud implements Screen {
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.setHelmetArmor(null);
                         }
-                    } else if (slotID == 21) {
+                    } else if (slotID == -3) {
                         /* Clicked on vest */
                         Item itemToRemove = inventory.getVestArmor();
                         if (itemToRemove != null) {
@@ -139,35 +120,53 @@ public class Hud implements Screen {
                             ((PlayState) state).getItems().add(itemToRemove);
                             inventory.setVestArmor(null);
                         }
+                    } else if (slotID < INVENTORY_SIZE) {
+                        /* Clicked on item in INVENTORY */
+                        Item itemToRemove = inventory.getItem(slotID);
+                        if (itemToRemove != null) {
+                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
+                            ((PlayState) state).getItems().add(itemToRemove);
+                            inventory.removeItemFromInventory(itemToRemove);
+                        }
+                    } else if (slotID >= INVENTORY_SIZE) {
+                        /* Clicked on item in TRAY */
+                        Item itemToRemove = inventory.getTray()[slotID - INVENTORY_SIZE];
+                        if (itemToRemove != null) {
+                            itemToRemove.getCircleSprite().setPosition(worldToPixels(player.getPosition().x) - itemToRemove.getCircleSprite().getWidth() / 2,
+                                    worldToPixels(player.getPosition().y) - itemToRemove.getCircleSprite().getHeight() / 2);
+                            ((PlayState) state).getItems().add(itemToRemove);
+                            inventory.removeItemFromTray(itemToRemove);
+                        }
                     }
                     return;
                 }
 
-                if (slotID < 10) {
-                    /* Clicked on item in INVENTORY */
-                    inventory.selectItem(inventory.getItem(slotID));
-                } else if (slotID < 20) {
-                    /* Clicked on item in TRAY */
-                    inventory.returnItemToInventory(inventory.getTray()[slotID - 10]);
-                } else if (slotID == 20) {
+                if (slotID == -1) {
+                    toggleInventory();
+                } else if (slotID == -2) {
                     /* Clicked on helmet */
                     inventory.returnItemToInventory(inventory.getHelmetArmor());
-                } else if (slotID == 21) {
+                } else if (slotID == -3) {
                     /* Clicked on vest */
                     inventory.returnItemToInventory(inventory.getVestArmor());
-                } else if (slotID == 22) {
-                    toggleInventory();
+                } else if (slotID < INVENTORY_SIZE) {
+                    /* Clicked on item in INVENTORY */
+                    inventory.selectItem(inventory.getItem(slotID));
+                } else if (slotID >= INVENTORY_SIZE) {
+                    /* Clicked on item in TRAY */
+                    inventory.returnItemToInventory(inventory.getTray()[slotID - INVENTORY_SIZE]);
                 }
                 event.getTarget().addAction(sequence(alpha(0.5f), alpha(1, 0.05f))); // Click Animation
             }
         };
 
         /* Setting the position of inventory and tray group */
-        inventoryHGroup.setPosition(stage.getWidth() - 33, stage.getHeight() - 43);
+        inventoryHGroup.setPosition(stage.getWidth() - 33, stage.getHeight() - 33);
         trayHGroup.setPosition(stage.getWidth() - 4 * backgroundTex.getWidth() - 50, 106);
 
         /* Toggle inventory button, must be created before others to be in front of them */
-        toggleInventoryButton = new HudInventoryImage(hideTex, 22);
+        toggleInventoryButton = new HudInventoryImage(hideTex, -1);
         toggleInventoryButton.addListener(clickListener);
         inventoryHGroup.addActor(toggleInventoryButton);
 
@@ -183,19 +182,19 @@ public class Hud implements Screen {
         /* Creates a tray tile and adds it into horizontal inventory group */
         for (int i = 0; i < 4; i++) {
             Item item = inventory.getTray()[i];
-            HudInventoryImage image = new HudInventoryImage(pickTexture(item), 10 + i);
+            HudInventoryImage image = new HudInventoryImage(pickTexture(item), INVENTORY_SIZE + i);
             image.addListener(clickListener);
             trayList.add(image);
             trayHGroup.addActor(image);
         }
 
         /* Helmet armor tile */
-        helmet = new HudInventoryImage(pickTexture(null), 20);
+        helmet = new HudInventoryImage(pickTexture(null), -2);
         helmet.setPosition(stage.getWidth() - backgroundTex.getWidth() - 20, 198);
         helmet.addListener(clickListener);
 
         /* Bulletproof vest armor tile */
-        vest = new HudInventoryImage(pickTexture(null), 21);
+        vest = new HudInventoryImage(pickTexture(null), -3);
         vest.setPosition(stage.getWidth() - backgroundTex.getWidth() - 20, 142);
         vest.addListener(clickListener);
 
@@ -325,11 +324,11 @@ public class Hud implements Screen {
     public void toggleInventory() {
         if (hidden) {
             toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(hideTex)));
-            inventoryHGroup.addAction(moveBy(-(INVENTORY_SIZE * 46 + 72), 0, 0.5f, Interpolation.pow2));
+            inventoryHGroup.addAction(moveBy(-(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10), 0, 0.5f, Interpolation.pow2));
             hidden = false;
         } else {
             toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(showTex)));
-            inventoryHGroup.addAction(moveBy(INVENTORY_SIZE * 46 + 72, 0, 0.5f, Interpolation.pow2));
+            inventoryHGroup.addAction(moveBy(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10, 0, 0.5f, Interpolation.pow2));
             hidden = true;
         }
     }
