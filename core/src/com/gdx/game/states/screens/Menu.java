@@ -4,15 +4,16 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.Texture;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
@@ -37,16 +38,13 @@ public class Menu implements Screen {
     private Application application;
     private Stage stage;
     private ShapeRenderer shapeRenderer;
-    private Image play;
-    private Image settings;
-    private Image quit;
-    private Image howTo;
     private float height;
     private float width;
-    private final Texture quitTex;
-    private final Texture playTex;
-    private final Texture howToTex;
-    private final Texture settingsTex;
+    private HudButton playButton;
+    private HudButton settingsButton;
+    private HudButton quitButton;
+    private HudButton howToButton;
+    private Skin skin;
     private boolean load = false;
 
 
@@ -57,80 +55,23 @@ public class Menu implements Screen {
         this.shapeRenderer = new ShapeRenderer();
         resetInputProcessor();
 
-        Runnable dissolveButtons = () -> {
-            howTo.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
-            play.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
-            settings.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
-            quit.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
-        };
-        Runnable invDissolveButtons = () -> {
-            howTo.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), alpha(1)));
-            play.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), alpha(1)));
-            settings.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), alpha(1)));
-            quit.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), alpha(1)));
-        };
+        /* Setting up a new font */
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("agency-fb.ttf"));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = 52;
+        parameter.color = Color.WHITE;
+        BitmapFont segoeFont = generator.generateFont(parameter);
 
-        Runnable quitApplication = () -> Gdx.app.exit();
-
-        ClickListener clickListener = new ClickListener(Input.Buttons.LEFT) {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (event.getTarget().getName() != null) {
-                    event.getTarget().addAction(sequence(alpha(0.5f), alpha(1, 0.02f)));
-                    if (event.getTarget().getName().equals("QUIT_BUTTON"))
-                        event.getTarget().addAction(sequence(run(dissolveButtons), delay(2f), run(quitApplication)));
-                    if (event.getTarget().getName().equals("SETTINGS_BUTTON"))
-                        event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(() -> Constants.MENU_ON = false), run(invDissolveButtons)));
-                    if (event.getTarget().getName().equals("PLAY_BUTTON"))
-                        event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(() -> gameStateManager.setState(GameStateManager.State.LOADING, true))));
-                }
-            }
-        };
+        /* Setting up a skin for UI widgets */
+        skin = new Skin();
+        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
+        skin.add("default-font", segoeFont, BitmapFont.class);
+        skin.load(Gdx.files.internal("ui/uiSkin.json"));
 
         width = stage.getWidth();
         height = stage.getHeight();
 
-        HorizontalGroup horizontalGroup = new HorizontalGroup();
-        horizontalGroup.space(40);
-
-        VerticalGroup verticalGroup = new VerticalGroup();
-        verticalGroup.space(20);
-
-        /* Play button */
-        playTex = new Texture("ui/buttons/menu-play.png");
-        playTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        play = new Image(playTex);
-        play.setName("PLAY_BUTTON");
-        stage.addListener(clickListener);
-        verticalGroup.addActor(play);
-
-        /* Settings button */
-        settingsTex = new Texture("ui/buttons/menu-settings.png");
-        settingsTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        settings = new Image(settingsTex);
-        settings.setName("SETTINGS_BUTTON");
-        stage.addListener(clickListener);
-        verticalGroup.addActor(settings);
-
-        /* Quit game button */
-        quitTex = new Texture("ui/buttons/menu-quit.png");
-        quitTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        quit = new Image(quitTex);
-        quit.setName("QUIT_BUTTON");
-        stage.addListener(clickListener);
-        verticalGroup.addActor(quit);
-
-        /* Basic rules and tips button */
-        howToTex = new Texture("ui/buttons/menu-howto.png");
-        howToTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        howTo = new Image(howToTex);
-
-        horizontalGroup.addActor(verticalGroup);
-        horizontalGroup.addActor(howTo);
-        stage.addActor(horizontalGroup);
-        horizontalGroup.setPosition(stage.getWidth() / 2 - horizontalGroup.getPrefWidth() / 2, stage.getHeight() / 2);
-        horizontalGroup.addAction(sequence(alpha(0), delay(0.2f), run(() -> load = true), delay(1f), fadeIn(2, Interpolation.pow5Out)));
-
+        initButtons();
 
         Optional<JSONObject> topScore = Utils.getTopScoreJSON();
         topScore.ifPresent(jsonObject -> System.out.println(
@@ -138,6 +79,76 @@ public class Menu implements Screen {
                         "Killed zombies amount = " + jsonObject.get("zombies-killed") + "\n"
                         + jsonObject.get("date")
         ));
+    }
+
+    private void initButtons() {
+        // TODO: 18.07.2018 review actions, animation start at different time
+        Runnable dissolveButtons = () -> {
+            howToButton.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
+            playButton.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
+            settingsButton.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
+            quitButton.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
+        };
+
+        Runnable invDissolveButtons = () -> {
+            howToButton.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), alpha(1)));
+            playButton.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), alpha(1)));
+            settingsButton.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), alpha(1)));
+            quitButton.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), alpha(1)));
+        };
+
+        Runnable quitApplication = () -> Gdx.app.exit();
+
+
+        Table horizontalTable = new Table();
+        Table verticalTable = new Table();
+
+        /* Play button */
+        playButton = new HudButton("PLAY", skin);
+        verticalTable.add(playButton).width(300).height(92);
+        verticalTable.row();
+
+        /* Settings button */
+        settingsButton = new HudButton("SETTINGS", skin);
+        verticalTable.add(settingsButton).width(300).height(92).space(20);
+        verticalTable.row();
+
+        /* Quit game button */
+        quitButton = new HudButton("QUIT", skin);
+        verticalTable.add(quitButton).width(300).height(92);
+
+        /* Basic rules and tips button */
+        howToButton = new HudButton("HOW TO", skin);
+        horizontalTable.add(verticalTable);
+        horizontalTable.add(howToButton).width(505).height(316).spaceLeft(20);
+
+        stage.addActor(horizontalTable);
+        horizontalTable.setPosition(stage.getWidth() / 2 - horizontalTable.getWidth() / 2, stage.getHeight() / 2);
+        horizontalTable.addAction(sequence(alpha(0), delay(0.2f), run(() -> load = true), delay(1f), fadeIn(2, Interpolation.pow5Out)));
+
+
+        /* Buttons click listeners*/
+        playButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(() -> gameStateManager.setState(GameStateManager.State.LOADING, true))));
+            }
+        });
+
+        settingsButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(() -> Constants.MENU_ON = false), run(invDissolveButtons)));
+            }
+        });
+
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(sequence(run(dissolveButtons), delay(2f), run(quitApplication)));
+            }
+        });
+
     }
 
     @Override
@@ -179,11 +190,8 @@ public class Menu implements Screen {
 
     @Override
     public void dispose() {
+        skin.dispose();
         shapeRenderer.dispose();
-        playTex.dispose();
-        howToTex.dispose();
-        quitTex.dispose();
-        settingsTex.dispose();
         stage.dispose();
     }
 

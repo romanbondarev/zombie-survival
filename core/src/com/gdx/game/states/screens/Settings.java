@@ -54,7 +54,6 @@ public class Settings implements Screen {
         this.shapeRenderer = new ShapeRenderer();
         resetInputProcessor();
 
-
         /* Setting up a new font */
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("agency-fb.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
