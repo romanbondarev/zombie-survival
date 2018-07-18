@@ -6,7 +6,7 @@ import com.gdx.game.utils.Constants;
 
 public final class Handgun extends Weapon {
     public Handgun(String name) {
-        super(WeaponType.HANDGUN, name, Constants.handgunDamage, 10,
+        super(WeaponType.HANDGUN, name, Constants.handgunDamage, 12,
                 Application.assetManager.get("ui/inventory-items-round/handgun.png", Texture.class),
                 Application.assetManager.get("ui/inventory-items/handgun.png", Texture.class));
     }
