@@ -1,6 +1,7 @@
 package com.gdx.game.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.math.Vector2;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -66,6 +67,19 @@ public class Utils {
         }
 
         return Optional.ofNullable(((JSONObject) top));
+    }
+
+
+    public static double getDistanceBetween(Vector2 target, Vector2 player) {
+        double x = target.x - player.x;
+        double y = target.y - player.y;
+        return Math.sqrt(x * x + y * y);
+    }
+
+    public static double getDegreesBetween(Vector2 target, Vector2 player) {
+        double x = target.x - player.x;
+        double y = target.y - player.y;
+        return -Math.toDegrees(Math.atan2(x, y)) + 90;
     }
 
 }
