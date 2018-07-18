@@ -27,6 +27,8 @@ import com.gdx.game.Application;
 import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.utils.Constants;
 
+import java.util.stream.IntStream;
+
 public class LoadingState extends GameState {
     private ShapeRenderer shapeRenderer;
     private Stage stage;
@@ -45,7 +47,9 @@ public class LoadingState extends GameState {
          * Setting up a skin for UI widgets.
          * Cannot load from asset manager, because assets were not loaded yet.
          */
+
         skin = new Skin();
+        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
         FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("agency-fb.ttf"));
         FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
         parameter.size = 80;
@@ -111,11 +115,14 @@ public class LoadingState extends GameState {
     }
 
     private void queueAssets() {
+        /* Sounds and music */
         Application.assetManager.load("sound/effects/rifleSingleShot.wav", Sound.class);
         Application.assetManager.load("sound/effects/handgunSingleShot.wav", Sound.class);
         Application.assetManager.load("sound/effects/itemPickUp.mp3", Sound.class);
         Application.assetManager.load("sound/effects/weaponReload.mp3", Music.class);
         Application.assetManager.load("sound/music/backgroundMusic.mp3", Music.class);
+        IntStream.range(1, 24).forEach(i -> Application.assetManager.load("sound/effects/zombies/zombie-" + i + ".wav", Music.class));
+        /* WAV files must have 16 bits per sample: 24 */
 
         /* Player animations */
         Application.assetManager.load("animation-assets/player/playerRifleMove.atlas", TextureAtlas.class);
@@ -145,8 +152,10 @@ public class LoadingState extends GameState {
         Application.assetManager.load("ui/inventory-items/selector.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/rifle.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/handgun.png", Texture.class);
+        Application.assetManager.load("ui/inventory-items/shotgun.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/rifleAmmo.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/handgunAmmo.png", Texture.class);
+        Application.assetManager.load("ui/inventory-items/shotgunAmmo.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/helmet.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/vest.png", Texture.class);
         Application.assetManager.load("ui/inventory-items/medkit.png", Texture.class);
@@ -157,6 +166,7 @@ public class LoadingState extends GameState {
         Application.assetManager.load("ui/inventory-items-round/shotgun.png", Texture.class);
         Application.assetManager.load("ui/inventory-items-round/rifleAmmo.png", Texture.class);
         Application.assetManager.load("ui/inventory-items-round/handgunAmmo.png", Texture.class);
+        Application.assetManager.load("ui/inventory-items-round/shotgunAmmo.png", Texture.class);
         Application.assetManager.load("ui/inventory-items-round/helmet.png", Texture.class);
         Application.assetManager.load("ui/inventory-items-round/vest.png", Texture.class);
         Application.assetManager.load("ui/inventory-items-round/medkit.png", Texture.class);
