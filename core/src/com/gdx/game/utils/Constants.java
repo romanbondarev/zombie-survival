@@ -15,15 +15,16 @@ public final class Constants {
     public static int zombieDamage = 5;
     public static int meleeDamage = 20;
     public static int handgunDamage = 20;
+    public static int shotgunDamage = 50;
     public static int rifleDamage = 35;
 
     public static final float PPM = 64; // Pixels per meter
     public static final float GRAVITY = 0f;
     public static final float SCALE = 1.25f;
 
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
     public static boolean DIFFICULT_GAME = false;
-    public static boolean SHARP_MOVEMENT = false;
+    public static boolean SMOOTH_MOVEMENT = true;
     public static boolean CAMERA_LERP = true;
     public static boolean IN_GAME_PAUSE = false;
     public static boolean MENU_ON = true;
