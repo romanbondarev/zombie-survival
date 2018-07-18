@@ -9,14 +9,14 @@ import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
-import com.gdx.game.managers.Sounds;
 import com.gdx.game.items.Inventory;
 import com.gdx.game.items.Item;
-import com.gdx.game.items.weapons.Handgun;
 import com.gdx.game.items.weapons.Rifle;
+import com.gdx.game.items.weapons.Shotgun;
 import com.gdx.game.items.weapons.Weapon;
-import com.gdx.game.items.weapons.ammo.HandgunAmmo;
 import com.gdx.game.items.weapons.ammo.RifleAmmo;
+import com.gdx.game.items.weapons.ammo.ShotgunAmmo;
+import com.gdx.game.managers.Sounds;
 import com.gdx.game.models.animations.PlayerAnimation;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
@@ -25,7 +25,7 @@ import com.gdx.game.utils.Constants;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.gdx.game.utils.Constants.SHARP_MOVEMENT;
+import static com.gdx.game.utils.Constants.SMOOTH_MOVEMENT;
 import static com.gdx.game.utils.WCC.mouseClickWorldPosition;
 import static com.gdx.game.utils.WCC.pixelsToWorld;
 import static com.gdx.game.utils.WCC.worldToPixels;
@@ -75,21 +75,10 @@ public class Player {
         this.health = health;
         Constants.DEAD = false;
 
-        Rifle rifle = new Rifle("Riffle");
-        rifle.loadAmmo(new RifleAmmo(50, "AMMO"));
-        rifle.reload();
-        Handgun handgun = new Handgun("Handgun");
-        handgun.loadAmmo(new HandgunAmmo(50, "AMMO"));
-        handgun.reload();
-        inventory.addItemToInventory(rifle);
-        inventory.selectItem(rifle);
-        inventory.setSelectedCellID(1);
-        inventory.addItemToInventory(handgun);
-        inventory.selectItem(handgun);
-        inventory.setSelectedCellID(0);
-
+        initInventory();
         animation = new PlayerAnimation(this);
     }
+
 
     public void update() {
         Item item = inventory.getSelectedCellItem();
@@ -103,28 +92,27 @@ public class Player {
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (SHARP_MOVEMENT) velY += 1;
+            if (!SMOOTH_MOVEMENT) velY += 1;
             else body.applyForceToCenter(0, force, false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (SHARP_MOVEMENT) velY -= 1;
+            if (!SMOOTH_MOVEMENT) velY -= 1;
             else body.applyForceToCenter(0, -force, false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (SHARP_MOVEMENT) velX -= 1;
+            if (!SMOOTH_MOVEMENT) velX -= 1;
             else body.applyForceToCenter(-force, 0, false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (SHARP_MOVEMENT) velX += 1;
+            if (!SMOOTH_MOVEMENT) velX += 1;
             else body.applyForceToCenter(force, 0, false);
         }
 
-
-        if (SHARP_MOVEMENT) body.setLinearVelocity(velX * 4.5f, velY * 4.5f);
-        else body.setLinearVelocity(body.getLinearVelocity().x, body.getLinearVelocity().y); // DEFAULT
+        if (!SMOOTH_MOVEMENT) body.setLinearVelocity(velX * 4.5f, velY * 4.5f); // DEFAULT
+        else body.setLinearVelocity(body.getLinearVelocity().x, body.getLinearVelocity().y);
     }
 
     private void eventsUpdate(Item item) {
@@ -260,28 +248,19 @@ public class Player {
         animation.renderAnimation(batch);
     }
 
-    public Body getBody() {
-        return body;
-    }
-
-    public Vector2 getPosition() {
-        return body.getPosition();
-    }
-
-    public Inventory getInventory() {
-        return inventory;
-    }
-
-    public PlayerAnimation getAnimation() {
-        return animation;
-    }
-
-    public int getHealth() {
-        return health;
-    }
-
-    public void setHealth(int health) {
-        this.health = health;
+    private void initInventory() {
+        Rifle rifle = new Rifle("Riffle");
+        rifle.loadAmmo(new RifleAmmo(5000, "AMMO"));
+        rifle.reload();
+        Shotgun shotgun = new Shotgun("Handgun");
+        shotgun.loadAmmo(new ShotgunAmmo(5000, "AMMO"));
+        shotgun.reload();
+        inventory.addItemToInventory(rifle);
+        inventory.selectItem(rifle);
+        inventory.setSelectedCellID(1);
+        inventory.addItemToInventory(shotgun);
+        inventory.selectItem(shotgun);
+        inventory.setSelectedCellID(0);
     }
 
     public void takeDamage(int damage) {
@@ -309,6 +288,30 @@ public class Player {
         } else {
             Constants.DEAD = true;
         }
+    }
+
+    public Body getBody() {
+        return body;
+    }
+
+    public Vector2 getPosition() {
+        return body.getPosition();
+    }
+
+    public Inventory getInventory() {
+        return inventory;
+    }
+
+    public PlayerAnimation getAnimation() {
+        return animation;
+    }
+
+    public int getHealth() {
+        return health;
+    }
+
+    public void setHealth(int health) {
+        this.health = health;
     }
 
 }
