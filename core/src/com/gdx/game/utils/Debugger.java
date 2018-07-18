@@ -6,6 +6,7 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
@@ -48,6 +49,7 @@ public class Debugger implements Screen {
         this.starting = LocalDateTime.now();
 
         skin = new Skin();
+        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
         agency = Application.assetManager.get("agency-fb.ttf", BitmapFont.class);
         agency.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
         agency.getData().setScale(0.75f);
