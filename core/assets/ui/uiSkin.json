@@ -1,10 +1,30 @@
 {
   com.badlogic.gdx.graphics.Color: {
-    white: { a: 1, b: 1, g: 1, r: 1 }
-
+    white: {
+      a: 1,
+      b: 1,
+      g: 1,
+      r: 1
+    }
   },
   com.badlogic.gdx.scenes.scene2d.ui.Label$LabelStyle: {
-    default: { font: default-font, fontColor: white }
+    default: {
+      font: default-font,
+      fontColor: white
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.Button$ButtonStyle: {
+    default: {
+      down: default-round-down,
+      up: default-round
+    }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.TextButton$TextButtonStyle: {
+    default: {
+      font: default-font,
+      fontColor: white
+      up: default-round-down,
+      down: default-round
+    }
   }
-
 }
