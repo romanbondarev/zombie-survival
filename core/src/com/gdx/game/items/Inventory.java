@@ -10,6 +10,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
+import static com.gdx.game.utils.Constants.*;
+
 public class Inventory {
 
     public enum Direction {
@@ -32,8 +34,8 @@ public class Inventory {
      */
     public Inventory(Player player) {
         this.player = player;
-        tray = new Item[4];
-        inventory = new Item[Constants.INVENTORY_SIZE];
+        tray = new Item[TRAY_SIZE];
+        inventory = new Item[INVENTORY_SIZE];
     }
 
     /**
@@ -171,12 +173,12 @@ public class Inventory {
     public void scrollTray(Direction direction) {
         switch (direction) {
             case NEXT:
-                if (selectedCellID < 3) selectedCellID++;
+                if (selectedCellID < tray.length) selectedCellID++;
                 else selectedCellID = 0;
                 break;
             case PREVIOUS:
                 if (selectedCellID > 0) selectedCellID--;
-                else selectedCellID = 3;
+                else selectedCellID = tray.length;
                 break;
         }
     }
