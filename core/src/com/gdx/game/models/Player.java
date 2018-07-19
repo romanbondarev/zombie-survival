@@ -16,7 +16,7 @@ import com.gdx.game.items.weapons.Shotgun;
 import com.gdx.game.items.weapons.Weapon;
 import com.gdx.game.items.weapons.ammo.RifleAmmo;
 import com.gdx.game.items.weapons.ammo.ShotgunAmmo;
-import com.gdx.game.managers.Sounds;
+import com.gdx.game.managers.SoundManager;
 import com.gdx.game.models.animations.PlayerAnimation;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
@@ -26,6 +26,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import static com.gdx.game.utils.Constants.SMOOTH_MOVEMENT;
+import static com.gdx.game.utils.Constants.TRAY_SIZE;
 import static com.gdx.game.utils.WCC.mouseClickWorldPosition;
 import static com.gdx.game.utils.WCC.pixelsToWorld;
 import static com.gdx.game.utils.WCC.worldToPixels;
@@ -71,12 +72,12 @@ public class Player {
         shape.dispose();
 
         // Creating an inventory
-        inventory = new Inventory(this);
+        this.inventory = new Inventory(this);
         this.health = health;
         Constants.DEAD = false;
 
         initInventory();
-        animation = new PlayerAnimation(this);
+        this.animation = new PlayerAnimation(this);
     }
 
 
@@ -204,7 +205,7 @@ public class Player {
 
                 if (distanceInBetween < 46) {
                     if (inventory.hasSpace()) {
-                        Sounds.itemPickUp().play();
+                        SoundManager.itemPickUp().play();
                         System.out.println("PICKED UP");
                         ((PlayState) gameState).getItems().remove(item1);
                         inventory.addItemToInventory(item1);
@@ -215,25 +216,12 @@ public class Player {
         }
 
         /* ### Select the TRAY item ###*/
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
-            animation.resetReload();
-            inventory.setSelectedCellID(0);
-            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
-            animation.resetReload();
-            inventory.setSelectedCellID(1);
-            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
-            animation.resetReload();
-            inventory.setSelectedCellID(2);
-            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
-        }
-        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
-            animation.resetReload();
-            inventory.setSelectedCellID(3);
-            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
+        for (int i = 8; i < 17; i++) {
+            if (Gdx.input.isKeyJustPressed(i) && i - 8 < TRAY_SIZE){
+                animation.resetReload();
+                inventory.setSelectedCellID(i - 8);
+                animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
+            }
         }
     }
 

@@ -16,7 +16,7 @@ import com.gdx.game.handlers.GameContactListener;
 import com.gdx.game.items.Item;
 import com.gdx.game.items.weapons.Bullet;
 import com.gdx.game.managers.GameStateManager;
-import com.gdx.game.managers.Sounds;
+import com.gdx.game.managers.SoundManager;
 import com.gdx.game.models.Player;
 import com.gdx.game.models.Zombie;
 import com.gdx.game.models.ZombieShooter;
@@ -37,7 +37,7 @@ import java.util.List;
 import static com.gdx.game.utils.Constants.CAMERA_LERP;
 import static com.gdx.game.utils.Constants.DIFFICULT_GAME;
 import static com.gdx.game.utils.Constants.GRAVITY;
-import static com.gdx.game.utils.Constants.SHARP_MOVEMENT;
+import static com.gdx.game.utils.Constants.SMOOTH_MOVEMENT;
 import static com.gdx.game.utils.WCC.worldToPixels;
 
 public class PlayState extends GameState {
@@ -64,28 +64,31 @@ public class PlayState extends GameState {
 
     public PlayState(GameStateManager gameStateManager, GameStateManager.State state) {
         super(gameStateManager, state);
-        world = new World(new Vector2(0, GRAVITY), false);
-        world.setContactListener(new GameContactListener());
-        player = new Player(this, 600, 1000, 100);
+        this.world = new World(new Vector2(0, GRAVITY), false);
+        this.world.setContactListener(new GameContactListener());
+        this.player = new Player(this, 600, 1000, 100);
 
-        tiledMap = DIFFICULT_GAME ? Application.assetManager.get("map/mapDifficult.tmx", TiledMap.class) : Application.assetManager.get("map/map.tmx", TiledMap.class);
-        levelHeight = tiledMap.getProperties().get("height", Integer.class);
-        levelWidth = tiledMap.getProperties().get("width", Integer.class);
-        mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+        this.tiledMap = DIFFICULT_GAME
+                ? Application.assetManager.get("map/mapDifficult.tmx", TiledMap.class)
+                : Application.assetManager.get("map/map.tmx", TiledMap.class);
+        this.levelHeight = tiledMap.getProperties().get("height", Integer.class);
+        this.levelWidth = tiledMap.getProperties().get("width", Integer.class);
+        this.mapRenderer = new OrthogonalTiledMapRenderer(tiledMap);
+
         TMLP.parseMapLayers(world, tiledMap, "collision", "objects-collision", "houses-collision");
         TMLP.parserMapItems(this, tiledMap, "inventory-items");
-        TMLP.parseMapSpawners(this, player, tiledMap, "spawners-zombies");
+        // TMLP.parseMapSpawners(this, player, tiledMap, "spawners-zombies");
 
-        frameRate = new FrameRate();
-        hud = new Hud(application, this, player);
-        pause = new Pause(application);
-        gameOver = new GameOver(application);
-        debugger = new Debugger(this);
+        this.frameRate = new FrameRate();
+        this.hud = new Hud(application, this, player);
+        this.pause = new Pause(application);
+        this.gameOver = new GameOver(application);
+        this.debugger = new Debugger(this);
 
-        Music music = Sounds.backgroundMusic();
-        music.setVolume(0.1f);
+        Music music = SoundManager.backgroundMusic();
+        music.setVolume(0.5f);
         music.setLooping(true);
-        music.play();
+        // music.play();
     }
 
     @Override
@@ -185,7 +188,7 @@ public class PlayState extends GameState {
 
     private void inputUpdate() {
         player.update();
-        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) SHARP_MOVEMENT = !SHARP_MOVEMENT;
+        if (Gdx.input.isKeyJustPressed(Input.Keys.F4)) SMOOTH_MOVEMENT = !SMOOTH_MOVEMENT;
         if (Gdx.input.isKeyJustPressed(Input.Keys.F5)) CAMERA_LERP = !CAMERA_LERP;
     }
 

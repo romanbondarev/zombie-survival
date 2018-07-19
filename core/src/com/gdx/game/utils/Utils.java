@@ -1,7 +1,12 @@
 package com.gdx.game.utils;
 
 import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.Color;
+import com.badlogic.gdx.graphics.g2d.BitmapFont;
+import com.badlogic.gdx.graphics.g2d.TextureAtlas;
+import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.math.Vector2;
+import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -82,4 +87,20 @@ public class Utils {
         return -Math.toDegrees(Math.atan2(x, y)) + 90;
     }
 
+    public static Skin initSkin(String fontPath, int fontSize) {
+        /* Setting up a new font */
+        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal(fontPath));
+        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
+        parameter.size = fontSize;
+        parameter.color = Color.WHITE;
+        BitmapFont segoeFont = generator.generateFont(parameter);
+
+        /* Setting up a skin for UI widgets */
+        Skin skin = new Skin();
+        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
+        skin.add("default-font", segoeFont, BitmapFont.class);
+        skin.load(Gdx.files.internal("ui/uiSkin.json"));
+
+        return skin;
+    }
 }
