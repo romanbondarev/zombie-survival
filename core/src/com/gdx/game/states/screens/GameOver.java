@@ -2,28 +2,24 @@ package com.gdx.game.states.screens;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
 import com.badlogic.gdx.scenes.scene2d.Stage;
-import com.badlogic.gdx.scenes.scene2d.ui.Image;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
-import com.badlogic.gdx.scenes.scene2d.ui.VerticalGroup;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
+import com.gdx.game.components.SelectorButton;
 import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.states.PlayState;
 import com.gdx.game.utils.Constants;
+import com.gdx.game.utils.Utils;
 
-import static com.badlogic.gdx.scenes.scene2d.actions.Actions.alpha;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeOut;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
@@ -37,18 +33,15 @@ public class GameOver implements Screen {
     private Camera camera;
     private ShapeRenderer shapeRenderer;
 
-    private BitmapFont segoeFont;
     private Skin skin;
 
-    private Image play;
-    private Image menu;
-    private Image quit;
-    private VerticalGroup verticalGroup;
+
     private Label counter;
 
-    private Texture playTex;
-    private Texture menuTex;
-    private Texture quitTex;
+    private SelectorButton playAgainButton;
+    private SelectorButton menuButton;
+    private SelectorButton quitButton;
+    private int killCounter = 0;
 
 
     public GameOver(Application application) {
@@ -56,97 +49,81 @@ public class GameOver implements Screen {
         this.application = application;
         this.camera = application.getCamera();
         this.shapeRenderer = new ShapeRenderer();
-        Gdx.input.setInputProcessor(stage);
+        this.skin = Utils.initSkin("agency-fb.ttf", 52);
 
-        /* Setting up a font */
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("agency-fb.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 52;
-        parameter.color = Color.WHITE;
-        segoeFont = generator.generateFont(parameter);
-
-        /* Setting up a skin for UI widgets */
-        skin = new Skin();
-        skin.add("default-font", segoeFont, BitmapFont.class);
-        skin.load(Gdx.files.internal("ui/uiSkin.json"));
-
-        /* Initializing the UI */
         initButtons();
+        resetInputProcessor();
     }
 
     private void initButtons() {
         Runnable dissolveButtons = () -> {
-            play.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
-            menu.addAction(fadeOut(0.5f, Interpolation.pow5));
-            quit.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
+            playAgainButton.addAction(parallel(moveBy(-800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
+            menuButton.addAction(fadeOut(0.5f, Interpolation.pow5));
+            quitButton.addAction(parallel(moveBy(800, 0, 0.5f, Interpolation.pow2), fadeOut(0.5f)));
         };
 
-        Runnable quitApplication = () -> Gdx.app.exit();
-
-
-        ClickListener clickListener = new ClickListener(Input.Buttons.LEFT) {
-            @Override
-            public void clicked(InputEvent event, float x, float y) {
-                if (event.getTarget().getName() != null) {
-                    event.getTarget().addAction(sequence(alpha(0.5f), alpha(1, 0.02f)));
-                }
-                if (event.getTarget().getName().equals("PLAYAGAIN_BUTTON")) {
-                    event.getTarget().addAction(sequence(run(dissolveButtons),
-                            delay(0.5f),
-                            run(() -> {
-                                Application.assetManager.clear();
-                                ((PlayState) application.getGameStateManager().getCurrentState()).exitState(GameStateManager.State.LOADING);
-                            })));
-                }
-                if (event.getTarget().getName().equals("MENU_BUTTON")) {
-                    event.getTarget().addAction(sequence(run(dissolveButtons),
-                            delay(0.5f),
-                            run(() -> {
-                                Application.assetManager.clear();
-                                ((PlayState) application.getGameStateManager().getCurrentState()).exitState(GameStateManager.State.MENU);
-                            })));
-                }
-                if (event.getTarget().getName().equals("QUIT_BUTTON")) {
-                    event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(quitApplication)));
-                }
-            }
-        };
-
-        verticalGroup = new VerticalGroup();
-        verticalGroup.space(20);
-
-        /* Play again button */
-        playTex = new Texture("ui/buttons/pause-playagain.png");
-        playTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        play = new Image(playTex);
-        play.setName("PLAYAGAIN_BUTTON");
-        play.addListener(clickListener);
-
-        /* Go to the main menu button */
-        menuTex = new Texture("ui/buttons/pause-menu.png");
-        menuTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        menu = new Image(menuTex);
-        menu.setName("MENU_BUTTON");
-        menu.addListener(clickListener);
-
-        /* Quit game button */
-        quitTex = new Texture("ui/buttons/pause-quit.png");
-        quitTex.setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        quit = new Image(quitTex);
-        quit.setName("QUIT_BUTTON");
-        quit.addListener(clickListener);
+        Table verticalTable = new Table();
 
         /* Kill counter */
         counter = new Label("", skin);
+        verticalTable.add(counter);
+        verticalTable.row();
 
-        /* Container for buttons above */
-        verticalGroup.addActor(counter);
-        verticalGroup.addActor(play);
-        verticalGroup.addActor(menu);
-        verticalGroup.addActor(quit);
+        /* Play again button */
+        playAgainButton = new SelectorButton("PLAY AGAIN", skin);
+        verticalTable.add(playAgainButton).width(520).height(92).space(20);
+        verticalTable.row();
 
-        stage.addActor(verticalGroup);
-        verticalGroup.setPosition(stage.getWidth() / 2, stage.getHeight() / 2 + verticalGroup.getPrefHeight() / 2);
+        /* Go to the main menu button */
+        menuButton = new SelectorButton("MAIN MENU", skin);
+        verticalTable.add(menuButton).width(520).height(92).space(20);
+        verticalTable.row();
+
+        /* Quit game button */
+        quitButton = new SelectorButton("QUIT GAME", skin);
+        verticalTable.add(quitButton).width(520).height(92);
+
+
+        /*
+         * Buttons click listeners
+         */
+
+        playAgainButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(sequence(run(dissolveButtons),
+                        delay(0.5f),
+                        run(() -> {
+                            Application.assetManager.clear();
+                            ((PlayState) application.getGameStateManager().getCurrentState()).exitState(GameStateManager.State.LOADING);
+                        })));
+            }
+        });
+
+        menuButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(sequence(run(dissolveButtons),
+                        delay(0.5f),
+                        run(() -> {
+                            Application.assetManager.clear();
+                            ((PlayState) application.getGameStateManager().getCurrentState()).exitState(GameStateManager.State.MENU);
+                        })));
+            }
+        });
+
+        quitButton.addListener(new ClickListener() {
+            @Override
+            public void clicked(InputEvent event, float x, float y) {
+                event.getTarget().addAction(sequence(run(dissolveButtons), delay(0.5f), run(() -> {
+                    Utils.saveGameJSON(killCounter);
+                    Gdx.app.exit();
+                })));
+            }
+        });
+
+        stage.addActor(verticalTable);
+        verticalTable.setPosition(stage.getWidth() / 2, stage.getHeight() / 2 + verticalTable.getWidth() / 2);
     }
 
 
@@ -170,6 +147,8 @@ public class GameOver implements Screen {
     }
 
     public void update(int amount) {
+        resetInputProcessor();
+        killCounter = amount;
         counter.setText("GAME OVER! ZOMBIES KILLED: " + amount);
         stage.act();
     }
@@ -177,10 +156,6 @@ public class GameOver implements Screen {
     @Override
     public void dispose() {
         shapeRenderer.dispose();
-        segoeFont.dispose();
-        playTex.dispose();
-        menuTex.dispose();
-        quitTex.dispose();
         stage.dispose();
     }
 

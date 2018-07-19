@@ -6,11 +6,11 @@ import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.physics.box2d.Box2DDebugRenderer;
-import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.utils.Align;
+import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
 import com.gdx.game.items.weapons.Weapon;
 import com.gdx.game.models.Enemy;
@@ -18,7 +18,6 @@ import com.gdx.game.models.Player;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
 import com.gdx.game.states.screens.Screen;
-import com.gdx.game.utils.spawners.ItemSpawner;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
@@ -30,63 +29,77 @@ import static com.gdx.game.utils.WCC.worldToPixels;
 
 public class Debugger implements Screen {
     private PlayState state;
-    private SpriteBatch batch;
-    private SpriteBatch batch2;
+    private Stage stage;
+    private SpriteBatch mainBatch;
+    private SpriteBatch itemBatch;
     private ShapeRenderer shapeRenderer;
     private Camera camera;
     private Box2DDebugRenderer b2dr;
-    private Skin skin;
     private BitmapFont agency;
-    private LocalDateTime starting;
+    private LocalDateTime startTime;
 
     public Debugger(GameState state) {
         this.state = ((PlayState) state);
-        this.batch = new SpriteBatch();
-        this.batch2 = new SpriteBatch();
+        this.stage = new Stage(new ScreenViewport());
+        this.mainBatch = new SpriteBatch();
+        this.itemBatch = new SpriteBatch();
         this.camera = ((PlayState) state).getCamera();
-        this.b2dr = new Box2DDebugRenderer(); // Box2D renderer
+        this.b2dr = new Box2DDebugRenderer();
         this.shapeRenderer = new ShapeRenderer();
-        this.starting = LocalDateTime.now();
-
-        skin = new Skin();
-        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
-        agency = Application.assetManager.get("agency-fb.ttf", BitmapFont.class);
-        agency.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
-        agency.getData().setScale(0.75f);
-        skin.add("default-font", agency, BitmapFont.class);
-        skin.load(Gdx.files.internal("ui/uiSkin.json"));
+        this.startTime = LocalDateTime.now();
+        this.agency = Application.assetManager.get("agency-fb.ttf", BitmapFont.class);
+        this.agency.getRegion().getTexture().setFilter(Texture.TextureFilter.Linear, Texture.TextureFilter.Linear);
+        this.agency.getData().setScale(0.75f);
     }
 
     public void render() {
         shapeRenderer.begin(ShapeRenderer.ShapeType.Line);
         shapeRenderer.setProjectionMatrix(camera.combined);
+
         List<Enemy> enemies = new LinkedList<>();
         enemies.addAll(state.getZombies());
         enemies.addAll(state.getZombieShooters());
 
+        Player player = state.getPlayer();
+
         for (Enemy enemy : enemies) {
-            Player player = state.getPlayer();
+            // Connections between enemies and the player
             if (Utils.getDistanceBetween(enemy.getPosition(), player.getPosition()) < 10) {
                 shapeRenderer.setColor(Color.WHITE);
-                shapeRenderer.line(worldToPixels(player.getPosition().x), worldToPixels(player.getPosition().y), worldToPixels(enemy.getPosition().x), worldToPixels(enemy.getPosition().y));
+                shapeRenderer.line(
+                        worldToPixels(player.getPosition().x),
+                        worldToPixels(player.getPosition().y),
+                        worldToPixels(enemy.getPosition().x),
+                        worldToPixels(enemy.getPosition().y)
+                );
             }
-            for (Enemy enemy1 : enemies) {
-                if (Utils.getDistanceBetween(enemy.getPosition(), enemy1.getPosition()) < 10) {
+
+            for (Enemy enemyCopy : enemies) {
+                // Connections between enemies themselves
+                if (Utils.getDistanceBetween(enemy.getPosition(), enemyCopy.getPosition()) < 10) {
                     shapeRenderer.setColor(Color.RED);
-                    shapeRenderer.line(worldToPixels(enemy1.getPosition().x), worldToPixels(enemy1.getPosition().y), worldToPixels(enemy.getPosition().x), worldToPixels(enemy.getPosition().y));
+                    shapeRenderer.line(
+                            worldToPixels(enemyCopy.getPosition().x),
+                            worldToPixels(enemyCopy.getPosition().y),
+                            worldToPixels(enemy.getPosition().x),
+                            worldToPixels(enemy.getPosition().y)
+                    );
                 }
             }
         }
 
-        state.getItemSpawners().forEach(sp -> shapeRenderer.circle(
-                sp.getX() + sp.getBase().getCircleSprite().getWidth() / 2,
-                sp.getY() + sp.getBase().getCircleSprite().getHeight() / 2,
-                25));
+        state.getItemSpawners().forEach(spawner ->
+                shapeRenderer.circle(
+                        spawner.getX() + spawner.getBase().getCircleSprite().getWidth() / 2,
+                        spawner.getY() + spawner.getBase().getCircleSprite().getHeight() / 2,
+                        25)
+        );
 
         shapeRenderer.end();
 
-        batch.begin();
-        agency.draw(batch,
+        /* Top-left statistics */
+        mainBatch.begin();
+        agency.draw(mainBatch,
                 "DURATION = " + printTime() + "\n" +
                         "KILLED = " + state.getKillCounter() + "\n" +
                         "HP = " + state.getPlayer().getHealth() + "\n" +
@@ -95,20 +108,27 @@ public class Debugger implements Screen {
                         "HELMET = " + (state.getPlayer().getInventory().getHelmetArmor() != null ? 100 - state.getPlayer().getInventory().getHelmetArmor().getWearLevel() : null) + "\n" +
                         "VEST = " + (state.getPlayer().getInventory().getVestArmor() != null ? 100 - state.getPlayer().getInventory().getVestArmor().getWearLevel() : null),
                 20, Gdx.graphics.getHeight() - 20);
-        batch.end();
+        mainBatch.end();
 
-        batch2.setProjectionMatrix(camera.combined);
-        batch2.begin();
-        for (ItemSpawner spawner : state.getItemSpawners()) {
-            agency.draw(batch2, String.valueOf(100 - Math.round(((float) spawner.getCounter()) / spawner.getTimeLimit() * 100.0)), spawner.getX() + 3, spawner.getY() + 30, 40, Align.center, true);
-        }
-        batch2.end();
 
+        /* Item spawner's circle with timer */
+        itemBatch.setProjectionMatrix(camera.combined);
+        itemBatch.begin();
+
+        state.getItemSpawners().forEach(spawner -> agency.draw(
+                itemBatch,
+                String.valueOf(100 - Math.round(((float) spawner.getCounter()) / spawner.getTimeLimit() * 100.0)),
+                spawner.getX() + 3, spawner.getY() + 30, 40, Align.center, true)
+        );
+
+        itemBatch.end();
+
+        /* Box2d objects outline renderer */
         b2dr.render(state.getWorld(), camera.combined.scl(getPPM()));
     }
 
     private String printTime() {
-        Duration duration = Duration.between(starting, LocalDateTime.now());
+        Duration duration = Duration.between(startTime, LocalDateTime.now());
         long seconds = Math.abs(duration.getSeconds());
         long hours = seconds / 3600;
         seconds -= (hours * 3600);
@@ -124,8 +144,9 @@ public class Debugger implements Screen {
 
     @Override
     public void dispose() {
-        batch.dispose();
-        batch2.dispose();
+        stage.dispose();
+        mainBatch.dispose();
+        itemBatch.dispose();
         shapeRenderer.dispose();
         b2dr.dispose();
     }
@@ -137,6 +158,6 @@ public class Debugger implements Screen {
 
     @Override
     public void resetInputProcessor() {
-
+        Gdx.input.setInputProcessor(stage);
     }
 }

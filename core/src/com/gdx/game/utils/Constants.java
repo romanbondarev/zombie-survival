@@ -5,20 +5,21 @@ import com.gdx.game.managers.GameStateManager;
 public final class Constants {
     public static boolean DEAD = false;
 
-    public static final int WIDTH = 1280; // App width
-    public static final int HEIGHT = 720; // App height
-    public static final int INVENTORY_SIZE = 6; // Amount of slots for items in inventory (pref. < 10)
-    public static final int ITEM_RESPAWN_TIME = 15; // Zombie amount after which items are respawned
-    public static final int BULLET_SPEED = 20; // Speed of the bullet
+    public static final int WIDTH = 1280;
+    public static final int HEIGHT = 720;
+    public static final int INVENTORY_SIZE = 6;
+    public static final int TRAY_SIZE = 4;
+    public static final int ITEM_RESPAWN_TIME = 15;
+    public static final int BULLET_SPEED = 20;
 
     public static int shooterDamage = 3;
     public static int zombieDamage = 5;
     public static int meleeDamage = 20;
     public static int handgunDamage = 20;
     public static int shotgunDamage = 50;
-    public static int rifleDamage = 35;
+    public static int rifleDamage = 100; // 35
 
-    public static final float PPM = 64; // Pixels per meter
+    public static final float PPM = 64; // PIXELS PER METER
     public static final float GRAVITY = 0f;
     public static final float SCALE = 1.25f;
 

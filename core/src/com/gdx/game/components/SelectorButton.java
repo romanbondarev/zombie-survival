@@ -1,4 +1,4 @@
-package com.gdx.game.states.screens;
+package com.gdx.game.components;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
@@ -6,25 +6,24 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
 import com.gdx.game.utils.Constants;
 
-public class HudButton extends TextButton {
-    // TODO: 18.07.2018 rename class
-    private Texture line = new Texture("ui/buttons/selector-vertical.png");
-    private Texture lineGreen = new Texture("ui/buttons/selector-vertical-green.png");
+public class SelectorButton extends TextButton {
+    private Texture selector = new Texture("ui/buttons/selector-vertical.png");
+    private Texture selectorGreen = new Texture("ui/buttons/selector-vertical-green.png");
     private int lineWidth = 12;
     private int alignment;
     private BooleanListener booleanListener;
 
-    public HudButton(String text, Skin skin) {
+    public SelectorButton(String text, Skin skin) {
         super(text, skin);
     }
 
 
-    public HudButton(String text, Skin skin, int lineWidth) {
+    public SelectorButton(String text, Skin skin, int lineWidth) {
         super(text, skin);
         this.lineWidth = lineWidth;
     }
 
-    public HudButton(String text, Skin skin, int lineWidth, int alignment) {
+    public SelectorButton(String text, Skin skin, int lineWidth, int alignment) {
         super(text, skin);
         this.lineWidth = lineWidth;
         this.alignment = alignment;
@@ -33,8 +32,8 @@ public class HudButton extends TextButton {
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        if (getBoolean()) batch.draw(lineGreen, getX() + getWidth() - lineWidth, getY(), lineWidth, getHeight());
-        else batch.draw(line, getX() + getWidth() - lineWidth, getY(), lineWidth, getHeight());
+        if (getBoolean()) batch.draw(selectorGreen, getX() + getWidth() - lineWidth, getY(), lineWidth, getHeight());
+        else batch.draw(selector, getX() + getWidth() - lineWidth, getY(), lineWidth, getHeight());
     }
 
     public void addBooleanListener(BooleanListener statement) {

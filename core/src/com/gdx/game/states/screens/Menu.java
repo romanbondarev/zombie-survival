@@ -3,10 +3,6 @@ package com.gdx.game.states.screens;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.GL20;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.math.MathUtils;
@@ -16,7 +12,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
-import com.gdx.game.Application;
+import com.gdx.game.components.SelectorButton;
 import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.utils.Constants;
 import com.gdx.game.utils.Utils;
@@ -35,48 +31,36 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
 public class Menu implements Screen {
     private GameStateManager gameStateManager;
-    private Application application;
     private Stage stage;
     private ShapeRenderer shapeRenderer;
+    private Skin skin;
+
     private float height;
     private float width;
-    private HudButton playButton;
-    private HudButton settingsButton;
-    private HudButton quitButton;
-    private HudButton howToButton;
-    private Skin skin;
-    private boolean load = false;
 
+    private SelectorButton playButton;
+    private SelectorButton settingsButton;
+    private SelectorButton quitButton;
+    private SelectorButton howToButton;
+
+    private boolean loadingAnimation = false;
 
     public Menu(GameStateManager gameStateManager) {
-        this.application = gameStateManager.getApplication();
         this.gameStateManager = gameStateManager;
         this.stage = new Stage(new ScreenViewport());
         this.shapeRenderer = new ShapeRenderer();
-        resetInputProcessor();
-
-        /* Setting up a new font */
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("agency-fb.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 52;
-        parameter.color = Color.WHITE;
-        BitmapFont segoeFont = generator.generateFont(parameter);
-
-        /* Setting up a skin for UI widgets */
-        skin = new Skin();
-        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
-        skin.add("default-font", segoeFont, BitmapFont.class);
-        skin.load(Gdx.files.internal("ui/uiSkin.json"));
-
-        width = stage.getWidth();
-        height = stage.getHeight();
+        this.skin = Utils.initSkin("agency-fb.ttf", 52);
 
         initButtons();
+        resetInputProcessor();
+
+        this.width = stage.getWidth();
+        this.height = stage.getHeight();
 
         Optional<JSONObject> topScore = Utils.getTopScoreJSON();
         topScore.ifPresent(jsonObject -> System.out.println(
-                "CURRENT TOP SCORE\n" +
-                        "Killed zombies amount = " + jsonObject.get("zombies-killed") + "\n"
+                "CURRENT TOP SCORE\n"
+                        + "Killed zombies amount = " + jsonObject.get("zombies-killed") + "\n"
                         + jsonObject.get("date")
         ));
     }
@@ -104,30 +88,34 @@ public class Menu implements Screen {
         Table verticalTable = new Table();
 
         /* Play button */
-        playButton = new HudButton("PLAY", skin);
+        playButton = new SelectorButton("PLAY", skin);
         verticalTable.add(playButton).width(300).height(92);
         verticalTable.row();
 
         /* Settings button */
-        settingsButton = new HudButton("SETTINGS", skin);
+        settingsButton = new SelectorButton("SETTINGS", skin);
         verticalTable.add(settingsButton).width(300).height(92).space(20);
         verticalTable.row();
 
         /* Quit game button */
-        quitButton = new HudButton("QUIT", skin);
+        quitButton = new SelectorButton("QUIT", skin);
         verticalTable.add(quitButton).width(300).height(92);
 
         /* Basic rules and tips button */
-        howToButton = new HudButton("HOW TO", skin);
+        howToButton = new SelectorButton("HOW TO PLAY", skin);
         horizontalTable.add(verticalTable);
         horizontalTable.add(howToButton).width(505).height(316).spaceLeft(20);
 
+        /* Setting up the table's position and popup animation */
         stage.addActor(horizontalTable);
         horizontalTable.setPosition(stage.getWidth() / 2 - horizontalTable.getWidth() / 2, stage.getHeight() / 2);
-        horizontalTable.addAction(sequence(alpha(0), delay(0.2f), run(() -> load = true), delay(1f), fadeIn(2, Interpolation.pow5Out)));
+        horizontalTable.addAction(sequence(alpha(0), delay(0.2f), run(() -> loadingAnimation = true), delay(1f), fadeIn(2, Interpolation.pow5Out)));
 
 
-        /* Buttons click listeners*/
+        /*
+         * Buttons click listeners
+         */
+
         playButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -148,7 +136,6 @@ public class Menu implements Screen {
                 event.getTarget().addAction(sequence(run(dissolveButtons), delay(2f), run(quitApplication)));
             }
         });
-
     }
 
     @Override
@@ -156,18 +143,18 @@ public class Menu implements Screen {
         if (Gdx.input.isKeyJustPressed(Input.Keys.ENTER)) {
             gameStateManager.setState(GameStateManager.State.LOADING, true);
         }
-        if (load) {
+
+        if (loadingAnimation) {
             if (height > 4) height = MathUtils.lerp(height, 4, 0.2f);
             if (height <= 5) width = MathUtils.lerp(width, 0, 0.2f);
         }
+
         stage.act();
     }
 
     @Override
     public void render() {
-        Gdx.gl.glEnable(GL20.GL_BLEND);
-        Gdx.gl.glBlendFunc(GL20.GL_SRC_ALPHA, GL20.GL_ONE_MINUS_SRC_ALPHA);
-
+        /* Screen background */
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.rect(0, 0, stage.getWidth(), stage.getHeight(),
                 new Color(.6f, .2f, .2f, 1f),
@@ -175,8 +162,10 @@ public class Menu implements Screen {
                 new Color(.8f, .2f, .2f, 1f),
                 new Color(.2f, .2f, .2f, 1));
         shapeRenderer.end();
+
         stage.draw();
 
+        /* Game start up animation */
         shapeRenderer.begin(ShapeRenderer.ShapeType.Filled);
         shapeRenderer.setColor(Color.BLACK);
         shapeRenderer.rect(stage.getWidth() / 2 - width / 2, stage.getHeight() / 2 - height / 2, width, height);

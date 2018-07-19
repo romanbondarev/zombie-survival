@@ -3,9 +3,6 @@ package com.gdx.game.states.screens;
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.Color;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
-import com.badlogic.gdx.graphics.g2d.TextureAtlas;
-import com.badlogic.gdx.graphics.g2d.freetype.FreeTypeFontGenerator;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
 import com.badlogic.gdx.scenes.scene2d.InputEvent;
@@ -16,6 +13,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
+import com.gdx.game.components.SelectorButton;
 import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.states.PlayState;
 import com.gdx.game.utils.Constants;
@@ -28,21 +26,17 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveBy;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
-import static com.gdx.game.states.screens.HudButton.BooleanListener;
 
 public class Pause implements Screen {
     private Application application;
     private Stage stage;
     private ShapeRenderer shapeRenderer;
-
-    private BitmapFont segoeFont;
     private Skin skin;
 
-    private Table verticalTable;
     private Label counter;
-    private HudButton continueButton;
-    private HudButton menuButton;
-    private HudButton quitButton;
+    private SelectorButton continueButton;
+    private SelectorButton menuButton;
+    private SelectorButton quitButton;
 
     private int killCounter = 0;
 
@@ -51,23 +45,10 @@ public class Pause implements Screen {
         this.stage = new Stage(new ScreenViewport());
         this.application = application;
         this.shapeRenderer = new ShapeRenderer();
-        Gdx.input.setInputProcessor(stage);
+        this.skin = Utils.initSkin("agency-fb.ttf", 52);
 
-        /* Setting up a new font */
-        FreeTypeFontGenerator generator = new FreeTypeFontGenerator(Gdx.files.internal("agency-fb.ttf"));
-        FreeTypeFontGenerator.FreeTypeFontParameter parameter = new FreeTypeFontGenerator.FreeTypeFontParameter();
-        parameter.size = 52;
-        parameter.color = Color.WHITE;
-        segoeFont = generator.generateFont(parameter);
-
-        /* Setting up a skin for UI widgets */
-        skin = new Skin();
-        skin.addRegions(new TextureAtlas("ui/uiSkin.atlas"));
-        skin.add("default-font", segoeFont, BitmapFont.class);
-        skin.load(Gdx.files.internal("ui/uiSkin.json"));
-
-        /* Initializing the inventory UI */
         initButtons();
+        resetInputProcessor();
     }
 
     private void initButtons() {
@@ -83,7 +64,7 @@ public class Pause implements Screen {
             quitButton.addAction(parallel(moveBy(-800, 0), alpha(1)));
         };
 
-        verticalTable = new Table();
+        Table verticalTable = new Table();
 
         /* Kill counter */
         counter = new Label("", skin);
@@ -91,22 +72,24 @@ public class Pause implements Screen {
         verticalTable.row();
 
         /* Play again button */
-        continueButton = new HudButton("CONTINUE", skin);
-        continueButton.addBooleanListener(new BooleanListener(BooleanListener.Type.DEBUG));
+        continueButton = new SelectorButton("CONTINUE", skin);
         verticalTable.add(continueButton).width(520).height(92).space(20);
         verticalTable.row();
 
         /* Go to the main menu button */
-        menuButton = new HudButton("MAIN MENU", skin);
+        menuButton = new SelectorButton("MAIN MENU", skin);
         verticalTable.add(menuButton).width(520).height(92).space(20);
         verticalTable.row();
 
         /* Quit game button */
-        quitButton = new HudButton("QUIT GAME", skin);
+        quitButton = new SelectorButton("QUIT GAME", skin);
         verticalTable.add(quitButton).width(520).height(92);
 
 
-        /* Buttons click listeners */
+        /*
+         * Buttons click listeners
+         */
+
         continueButton.addListener(new ClickListener() {
             @Override
             public void clicked(InputEvent event, float x, float y) {
@@ -165,12 +148,10 @@ public class Pause implements Screen {
         stage.draw();
     }
 
-
     @Override
     public void dispose() {
         skin.dispose();
         stage.dispose();
-        segoeFont.dispose();
     }
 
     @Override

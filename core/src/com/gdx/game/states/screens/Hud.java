@@ -5,7 +5,6 @@ import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.Input;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.Texture;
-import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.Sprite;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
@@ -19,11 +18,13 @@ import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
+import com.gdx.game.components.ItemImage;
 import com.gdx.game.items.Inventory;
 import com.gdx.game.items.Item;
 import com.gdx.game.models.Player;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
+import com.gdx.game.utils.Utils;
 
 import java.util.LinkedList;
 
@@ -33,29 +34,30 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.moveTo;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 import static com.gdx.game.utils.Constants.INVENTORY_SIZE;
 import static com.gdx.game.utils.Constants.SCALE;
+import static com.gdx.game.utils.Constants.TRAY_SIZE;
 import static com.gdx.game.utils.WCC.worldToPixels;
 
 public class Hud implements Screen {
-    private Application application;
-    private Player player;
+    private GameState state;
     private Stage stage;
+    private Player player;
     private Inventory inventory;
+    private ShapeRenderer shapeRenderer;
     private Skin skin;
-    private ShapeRenderer shapeRenderer = new ShapeRenderer();
     private boolean hidden = true;
 
-    private LinkedList<HudInventoryImage> invList = new LinkedList<>();
-    private LinkedList<HudInventoryImage> trayList = new LinkedList<>();
+    private LinkedList<ItemImage> invList;
+    private LinkedList<ItemImage> trayList;
 
     private HorizontalGroup inventoryHGroup;
     private HorizontalGroup trayHGroup;
-    private HudInventoryImage helmet;
-    private HudInventoryImage vest;
-    private HudInventoryImage selector;
-    private HudInventoryImage ammoBackground;
-    private Label ammoLabel;
-    private Label vestAbosrbLabel;
+    private ItemImage helmet;
     private Label helmetAbsorbLabel;
+    private ItemImage vest;
+    private Label vestAbosrbLabel;
+    private ItemImage selector;
+    private ItemImage ammoBackground;
+    private Label ammoLabel;
 
     private Texture backgroundTex = Application.assetManager.get("ui/background/background.png", Texture.class);
     private Texture backgroundLargeTex = Application.assetManager.get("ui/background/background-large.png", Texture.class);
@@ -63,25 +65,21 @@ public class Hud implements Screen {
     private Texture hideTex = Application.assetManager.get("ui/buttons/hide-button.png", Texture.class);
     private Texture showTex = Application.assetManager.get("ui/buttons/show-button.png", Texture.class);
 
-    private HudInventoryImage toggleInventoryButton;
-    private GameState state;
+    private ItemImage toggleInventoryButton;
+
 
     public Hud(Application application, GameState state, Player player) {
-        this.application = application;
         this.state = state;
-        this.player = player;
         this.stage = new Stage(new ScreenViewport());
+        this.player = player;
         this.inventory = player.getInventory();
-        this.application = application;
-        Gdx.input.setInputProcessor(stage);
+        this.shapeRenderer = new ShapeRenderer();
+        this.skin = Utils.initSkin("SegoeUI-Black.ttf", 30);
+        this.invList = new LinkedList<>();
+        this.trayList = new LinkedList<>();
 
-        /* Setting up a skin for UI widgets */
-        skin = new Skin();
-        skin.add("default-font", Application.assetManager.get("SegoeUI-Black.ttf", BitmapFont.class), BitmapFont.class);
-        skin.load(Gdx.files.internal("ui/uiSkin.json"));
-
-        /* Initializing the inventory UI(HUD) */
         initButtons();
+        resetInputProcessor();
     }
 
     /**
@@ -100,7 +98,7 @@ public class Hud implements Screen {
             /* Mouse RIGHT CLICK listener */
             @Override
             public void clicked(InputEvent event, float x, float y) {
-                int slotID = ((HudInventoryImage) event.getTarget()).getId();
+                int slotID = ((ItemImage) event.getTarget()).getId();
                 if (Gdx.input.isKeyPressed(Input.Keys.CONTROL_LEFT)) {
                     if (slotID == -2) {
                         /* Clicked on helmet */
@@ -161,40 +159,40 @@ public class Hud implements Screen {
             }
         };
 
-        /* Setting the position of inventory and tray group */
+        /* Setting up the position of inventory and tray group */
         inventoryHGroup.setPosition(stage.getWidth() - 33, stage.getHeight() - 33);
         trayHGroup.setPosition(stage.getWidth() - 4 * backgroundTex.getWidth() - 50, 106);
 
         /* Toggle inventory button, must be created before others to be in front of them */
-        toggleInventoryButton = new HudInventoryImage(hideTex, -1);
+        toggleInventoryButton = new ItemImage(hideTex, -1);
         toggleInventoryButton.addListener(clickListener);
         inventoryHGroup.addActor(toggleInventoryButton);
 
         /* Creates a inventory tile and adds it into horizontal inventory group */
         for (int i = 0; i < INVENTORY_SIZE; i++) {
             Item item = inventory.getItem(i);
-            HudInventoryImage image = new HudInventoryImage(pickTexture(item), i);
+            ItemImage image = new ItemImage(pickTexture(item), i);
             image.addListener(clickListener);
             invList.add(image);
             inventoryHGroup.addActor(image);
         }
 
         /* Creates a tray tile and adds it into horizontal inventory group */
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < TRAY_SIZE; i++) {
             Item item = inventory.getTray()[i];
-            HudInventoryImage image = new HudInventoryImage(pickTexture(item), INVENTORY_SIZE + i);
+            ItemImage image = new ItemImage(pickTexture(item), INVENTORY_SIZE + i);
             image.addListener(clickListener);
             trayList.add(image);
             trayHGroup.addActor(image);
         }
 
         /* Helmet armor tile */
-        helmet = new HudInventoryImage(pickTexture(null), -2);
+        helmet = new ItemImage(pickTexture(null), -2);
         helmet.setPosition(stage.getWidth() - backgroundTex.getWidth() - 20, 198);
         helmet.addListener(clickListener);
 
         /* Bulletproof vest armor tile */
-        vest = new HudInventoryImage(pickTexture(null), -3);
+        vest = new ItemImage(pickTexture(null), -3);
         vest.setPosition(stage.getWidth() - backgroundTex.getWidth() - 20, 142);
         vest.addListener(clickListener);
 
@@ -209,7 +207,7 @@ public class Hud implements Screen {
         vestAbosrbLabel.setPosition(stage.getWidth() - 15, 145);
 
         /* Ammo counter's background */
-        ammoBackground = new HudInventoryImage(backgroundLargeTex, -1);
+        ammoBackground = new ItemImage(backgroundLargeTex, -1);
         ammoBackground.setPosition(stage.getWidth() - backgroundLargeTex.getWidth() - 20, 20);
 
         /* Ammo counter's text */
@@ -218,7 +216,7 @@ public class Hud implements Screen {
         ammoLabel.setAlignment(Align.center);
 
         /* Tray item selector */
-        selector = new HudInventoryImage(selectorTex, 100);
+        selector = new ItemImage(selectorTex, 100);
         selector.setPosition(stage.getWidth() - 234, 80);
 
         stage.addActor(inventoryHGroup);
@@ -243,7 +241,7 @@ public class Hud implements Screen {
             invList.get(i).setDrawable(new SpriteDrawable(new Sprite(pickTexture(item))));
         }
 
-        for (int i = 0; i < 4; i++) {
+        for (int i = 0; i < TRAY_SIZE; i++) {
             Item item = inventory.getTray()[i];
             trayList.get(i).setDrawable(new SpriteDrawable(new Sprite(pickTexture(item))));
         }
@@ -258,6 +256,7 @@ public class Hud implements Screen {
     }
 
     private void selectorPositionUpdate() {
+        // TODO: 19.07.2018 make it dynamically changeable accordingly to the TRAY_SIZE
         switch (inventory.getSelectedCellID()) {
             case 0:
                 selector.addAction(moveTo(stage.getWidth() - 234, 80, 0.05f));
@@ -306,6 +305,18 @@ public class Hud implements Screen {
         return (item != null) ? item.getSquareSprite().getTexture() : backgroundTex;
     }
 
+    public void toggleInventory() {
+        if (hidden) {
+            toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(hideTex)));
+            inventoryHGroup.addAction(moveBy(-(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10), 0, 0.5f, Interpolation.pow2));
+            hidden = false;
+        } else {
+            toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(showTex)));
+            inventoryHGroup.addAction(moveBy(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10, 0, 0.5f, Interpolation.pow2));
+            hidden = true;
+        }
+    }
+
     @Override
     public void resize(int width, int height) {
         stage.getViewport().update(((int) (width * SCALE)), ((int) (height * SCALE)));
@@ -319,18 +330,6 @@ public class Hud implements Screen {
         hideTex.dispose();
         showTex.dispose();
         shapeRenderer.dispose();
-    }
-
-    public void toggleInventory() {
-        if (hidden) {
-            toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(hideTex)));
-            inventoryHGroup.addAction(moveBy(-(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10), 0, 0.5f, Interpolation.pow2));
-            hidden = false;
-        } else {
-            toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(showTex)));
-            inventoryHGroup.addAction(moveBy(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10, 0, 0.5f, Interpolation.pow2));
-            hidden = true;
-        }
     }
 
     @Override
