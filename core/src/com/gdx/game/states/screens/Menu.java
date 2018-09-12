@@ -29,7 +29,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-public class Menu implements Screen {
+public final class Menu implements Screen {
     private GameStateManager gameStateManager;
     private Stage stage;
     private ShapeRenderer shapeRenderer;

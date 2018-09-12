@@ -12,9 +12,14 @@ import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.components.SelectorButton;
-import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.components.SelectorButton.BooleanListener.Type;
+import com.gdx.game.managers.GameStateManager;
 import com.gdx.game.utils.Utils;
+import org.json.simple.JSONObject;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.Optional;
 
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.delay;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.fadeIn;
@@ -31,7 +36,7 @@ import static com.gdx.game.utils.Constants.MENU_ON;
 import static com.gdx.game.utils.Constants.SCALE;
 import static com.gdx.game.utils.Constants.SMOOTH_MOVEMENT;
 
-public class Settings implements Screen {
+public final class Settings implements Screen {
     private ShapeRenderer shapeRenderer;
     private Stage stage;
     private Skin skin;
@@ -66,6 +71,15 @@ public class Settings implements Screen {
         };
 
         Table verticalTable = new Table();
+
+
+        Optional<JSONObject> topScore = Utils.getTopScoreJSON();
+        SelectorButton stats;
+        if (topScore.isPresent()) {
+            stats = new SelectorButton("Killed " + topScore.get().get("zombies-killed") + " at " + LocalDateTime.parse(topScore.get().get("date").toString()).format(DateTimeFormatter.ISO_DATE), skin, 0);
+        } else stats = new SelectorButton("No stats are available yet", skin, 0);
+        verticalTable.add(stats).width(520).height(92).spaceBottom(20);
+        verticalTable.row();
 
         /* Initializing a DIFFICULTY switch button */
         difficultyButton = new SelectorButton("DIFFICULTY", skin);

@@ -27,7 +27,7 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-public class Pause implements Screen {
+public final class Pause implements Screen {
     private Application application;
     private Stage stage;
     private ShapeRenderer shapeRenderer;
@@ -37,14 +37,13 @@ public class Pause implements Screen {
     private SelectorButton continueButton;
     private SelectorButton menuButton;
     private SelectorButton quitButton;
-
-    private int killCounter = 0;
-
+    private int killCounter;
 
     public Pause(Application application) {
         this.stage = new Stage(new ScreenViewport());
         this.application = application;
         this.shapeRenderer = new ShapeRenderer();
+        this.killCounter = 0;
         this.skin = Utils.initSkin("agency-fb.ttf", 52);
 
         initButtons();

@@ -2,7 +2,6 @@ package com.gdx.game.states.screens;
 
 
 import com.badlogic.gdx.Gdx;
-import com.badlogic.gdx.graphics.Camera;
 import com.badlogic.gdx.graphics.Color;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.math.Interpolation;
@@ -12,6 +11,7 @@ import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
+import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
 import com.gdx.game.components.SelectorButton;
@@ -27,28 +27,23 @@ import static com.badlogic.gdx.scenes.scene2d.actions.Actions.parallel;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.run;
 import static com.badlogic.gdx.scenes.scene2d.actions.Actions.sequence;
 
-public class GameOver implements Screen {
+public final class GameOver implements Screen {
     private Application application;
     private Stage stage;
-    private Camera camera;
     private ShapeRenderer shapeRenderer;
-
     private Skin skin;
 
-
     private Label counter;
-
     private SelectorButton playAgainButton;
     private SelectorButton menuButton;
     private SelectorButton quitButton;
-    private int killCounter = 0;
-
+    private int killCounter;
 
     public GameOver(Application application) {
         this.stage = new Stage(new ScreenViewport());
         this.application = application;
-        this.camera = application.getCamera();
         this.shapeRenderer = new ShapeRenderer();
+        this.killCounter = 0;
         this.skin = Utils.initSkin("agency-fb.ttf", 52);
 
         initButtons();
@@ -125,7 +120,6 @@ public class GameOver implements Screen {
         stage.addActor(verticalTable);
         verticalTable.setPosition(stage.getWidth() / 2, stage.getHeight() / 2 + verticalTable.getWidth() / 2);
     }
-
 
     @Override
     public void render() {
