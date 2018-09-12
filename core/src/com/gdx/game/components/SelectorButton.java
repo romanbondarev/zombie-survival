@@ -4,36 +4,64 @@ import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.graphics.g2d.Batch;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
 import com.badlogic.gdx.scenes.scene2d.ui.TextButton;
+import com.badlogic.gdx.utils.Align;
 import com.gdx.game.utils.Constants;
 
+/**
+ * Кнопка с текстом, при этом можно добавить полосу по бокам.
+ */
 public class SelectorButton extends TextButton {
+    private final static int DEFAULT_LINE_SIZE = 12;
+    private final static int DEFAULT_LINE_ALIGNMENT = Align.right;
+
     private Texture selector = new Texture("ui/buttons/selector-vertical.png");
     private Texture selectorGreen = new Texture("ui/buttons/selector-vertical-green.png");
-    private int lineWidth = 12;
+    private int lineSize;
     private int alignment;
     private BooleanListener booleanListener;
 
     public SelectorButton(String text, Skin skin) {
         super(text, skin);
+        this.lineSize = DEFAULT_LINE_SIZE;
     }
 
-
-    public SelectorButton(String text, Skin skin, int lineWidth) {
+    public SelectorButton(String text, Skin skin, int lineSize) {
         super(text, skin);
-        this.lineWidth = lineWidth;
+        this.lineSize = lineSize != -1 ? lineSize : DEFAULT_LINE_SIZE;
     }
 
-    public SelectorButton(String text, Skin skin, int lineWidth, int alignment) {
+    public SelectorButton(String text, Skin skin, int lineSize, int alignment) {
         super(text, skin);
-        this.lineWidth = lineWidth;
+        this.lineSize = lineSize != -1 ? lineSize : DEFAULT_LINE_SIZE;
         this.alignment = alignment;
     }
 
     @Override
     public void draw(Batch batch, float parentAlpha) {
         super.draw(batch, parentAlpha);
-        if (getBoolean()) batch.draw(selectorGreen, getX() + getWidth() - lineWidth, getY(), lineWidth, getHeight());
-        else batch.draw(selector, getX() + getWidth() - lineWidth, getY(), lineWidth, getHeight());
+
+        switch (alignment) {
+            case Align.top:
+                if (getBoolean()) {
+                    batch.draw(selectorGreen, getX(), getY() + getHeight() - lineSize, getWidth(), lineSize);
+                } else batch.draw(selector, getX(), getY() + getHeight() - lineSize, getWidth(), lineSize);
+                break;
+            case Align.bottom:
+                if (getBoolean()) {
+                    batch.draw(selectorGreen, getX(), getY(), getWidth(), lineSize);
+                } else batch.draw(selector, getX(), getY(), getWidth(), lineSize);
+                break;
+            case Align.left:
+                if (getBoolean()) {
+                    batch.draw(selectorGreen, getX(), getY(), lineSize, getHeight());
+                } else batch.draw(selector, getX(), getY(), lineSize, getHeight());
+                break;
+            default:
+                if (getBoolean()) {
+                    batch.draw(selectorGreen, getX() + getWidth() - lineSize, getY(), lineSize, getHeight());
+                } else batch.draw(selector, getX() + getWidth() - lineSize, getY(), lineSize, getHeight());
+                break;
+        }
     }
 
     public void addBooleanListener(BooleanListener statement) {
