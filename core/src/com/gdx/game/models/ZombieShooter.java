@@ -3,6 +3,7 @@ package com.gdx.game.models;
 import com.badlogic.gdx.math.Intersector;
 import com.badlogic.gdx.math.Vector2;
 import com.gdx.game.items.weapons.Bullet;
+import com.gdx.game.managers.SoundManager;
 import com.gdx.game.models.animations.ZombieShooterAnimation;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
@@ -18,6 +19,7 @@ public final class ZombieShooter extends Enemy {
     public ZombieShooter(GameState gameState, float x, float y) {
         super(gameState, x, y);
         zombieShooterAnimation = new ZombieShooterAnimation(this);
+        sound = SoundManager.randomZombieSound();
     }
 
     /**
@@ -36,6 +38,14 @@ public final class ZombieShooter extends Enemy {
             attackPlayer(player);
             zombieShooterAnimation.setAnimation(ZombieShooterAnimation.AnimationType.IDLE);
         } else if (distanceInBetween < 10) {
+            // TODO: 09.07.2018 rewrite this part of zombie sounds
+            if (!sound.isPlaying()) {
+                sound = SoundManager.randomZombieSound();
+                sound.play();
+            }
+            sound.setVolume((0.7f * (float) (1 - distanceInBetween / 10.0)));
+
+
             body.setLinearVelocity((float) (x / distanceInBetween) * 5, (float) (y / distanceInBetween) * 5);
             if (distanceInBetween > 3.15)
                 zombieShooterAnimation.setAnimation(ZombieShooterAnimation.AnimationType.MOVE);

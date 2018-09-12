@@ -1,5 +1,6 @@
 package com.gdx.game.models;
 
+import com.gdx.game.managers.SoundManager;
 import com.gdx.game.models.animations.ZombieAnimation;
 import com.gdx.game.states.GameState;
 import com.gdx.game.utils.Constants;
@@ -106,6 +107,14 @@ public final class Zombie extends Enemy {
         }
 
         if (distanceInBetween < 10 && !trouble) {
+            // TODO: 09.07.2018 rewrite this part of zombie sounds
+            if (!sound.isPlaying()) {
+                sound = SoundManager.randomZombieSound();
+                sound.play();
+            }
+            sound.setVolume((0.7f * (float) (1 - distanceInBetween / 10.0)));
+
+
             if (xPos.size() == 150) {
                 xPos.clear();
                 yPos.clear();
