@@ -25,7 +25,6 @@ import static com.gdx.game.utils.Constants.SCALE;
  * 19.08.2018
  */
 
-
 public class Application extends ApplicationAdapter {
     private OrthographicCamera camera;
     private SpriteBatch batch;
