@@ -7,7 +7,7 @@ import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.badlogic.gdx.graphics.g2d.TextureAtlas;
 import com.badlogic.gdx.utils.Array;
 import com.gdx.game.Application;
-import com.gdx.game.managers.Sounds;
+import com.gdx.game.managers.SoundManager;
 import com.gdx.game.items.Item;
 import com.gdx.game.items.weapons.Weapon;
 import com.gdx.game.models.Player;
@@ -97,7 +97,7 @@ public class PlayerAnimation {
     public void updateAnimation(double degrees) {
         if (currentAnimation.equals(AnimationType.RIFLE_RELOAD)) {
             /* RIFLE_RELOAD ANIMATION */
-            Music sound = Sounds.weaponReload();
+            Music sound = SoundManager.weaponReload();
             if (!sound.isPlaying()) sound.play();
             reloadTime += 0.1f;
             isReloading = true;
@@ -109,7 +109,7 @@ public class PlayerAnimation {
             }
         } else if (currentAnimation.equals(AnimationType.HANDGUN_RELOAD)) {
             /* HANDGUN_RELOAD ANIMATION */
-            Music sound = Sounds.weaponReload();
+            Music sound = SoundManager.weaponReload();
             if (!sound.isPlaying()) sound.play();
             reloadTime += 0.1f;
             isReloading = true;
@@ -136,7 +136,7 @@ public class PlayerAnimation {
             shootTime += 0.1f;
             isShooting = true;
             if (shootTime > 0.5f) {
-                Sounds.rifleSingleShot().play();
+                SoundManager.rifleSingleShot().play();
                 didShoot = true;
                 isShooting = false;
                 setAnimation(AnimationType.RIFLE_MOVE);
@@ -147,7 +147,7 @@ public class PlayerAnimation {
             shootTime += 0.1f;
             isShooting = true;
             if (shootTime > 1f) {
-                Sounds.handgunSingleShot().play();
+                SoundManager.handgunSingleShot().play();
                 didShoot = true;
                 isShooting = false;
                 setAnimation(AnimationType.HANDGUN_MOVE);
@@ -238,6 +238,7 @@ public class PlayerAnimation {
      * Chooses an animation accordingly to an item and action.
      */
     public AnimationType chooseAnimation(Item item, AnimationType event) {
+        // TODO: 13.07.2018 add shotgun animation option
         if (item != null) {
             if (event.equals(AnimationType.SHOOT)) {
                 if (((Weapon) item).getWeaponType().equals(Weapon.WeaponType.RIFLE)) {
