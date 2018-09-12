@@ -31,7 +31,7 @@ import static com.gdx.game.utils.WCC.mouseClickWorldPosition;
 import static com.gdx.game.utils.WCC.pixelsToWorld;
 import static com.gdx.game.utils.WCC.worldToPixels;
 
-public class Player {
+public final class Player {
     private GameState gameState;
     private Camera camera;
     private Body body;
@@ -193,7 +193,7 @@ public class Player {
 
 
         /* ### Open inventory ### */
-        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) ((PlayState) gameState).getHud().toggleInventory();
+        if (Gdx.input.isKeyJustPressed(Input.Keys.E)) inventory.toggle();
 
         /* ### Pick up/use item ### */
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
@@ -215,7 +215,7 @@ public class Player {
             }
         }
 
-        /* ### Select the TRAY item ###*/
+        /* ### Select the TRAY item ### */
         for (int i = 8; i < 17; i++) {
             if (Gdx.input.isKeyJustPressed(i) && i - 8 < TRAY_SIZE){
                 animation.resetReload();
