@@ -9,6 +9,23 @@ import com.gdx.game.managers.GameStateManager;
 
 import static com.gdx.game.utils.Constants.SCALE;
 
+/*
+ * Dear, me!
+ *
+ * I'm truly sorry for the crap I wrote below.
+ * In order to make this work I have done unforgivable things.
+ * But it works, huraaaay! :)
+ *
+ * I believe that current you is more experienced and knows what he is doing, because I don't!
+ * You had enough of courage if you have decided to finnish this project.
+ *
+ * May the refactoring be with you,
+ * You :3
+ *
+ * 19.08.2018
+ */
+
+
 public class Application extends ApplicationAdapter {
     private OrthographicCamera camera;
     private SpriteBatch batch;
