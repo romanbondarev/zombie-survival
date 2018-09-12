@@ -13,12 +13,15 @@ import com.badlogic.gdx.scenes.scene2d.Stage;
 import com.badlogic.gdx.scenes.scene2d.ui.HorizontalGroup;
 import com.badlogic.gdx.scenes.scene2d.ui.Label;
 import com.badlogic.gdx.scenes.scene2d.ui.Skin;
+import com.badlogic.gdx.scenes.scene2d.ui.Table;
 import com.badlogic.gdx.scenes.scene2d.utils.ClickListener;
 import com.badlogic.gdx.scenes.scene2d.utils.SpriteDrawable;
 import com.badlogic.gdx.utils.Align;
 import com.badlogic.gdx.utils.viewport.ScreenViewport;
 import com.gdx.game.Application;
+import com.gdx.game.components.HudImageButton;
 import com.gdx.game.components.ItemImage;
+import com.gdx.game.handlers.HudImageButtonClickListener;
 import com.gdx.game.items.Inventory;
 import com.gdx.game.items.Item;
 import com.gdx.game.models.Player;
@@ -44,10 +47,12 @@ public class Hud implements Screen {
     private Inventory inventory;
     private ShapeRenderer shapeRenderer;
     private Skin skin;
-    private boolean hidden = true;
+    private boolean hidden = false;
 
     private LinkedList<ItemImage> invList;
     private LinkedList<ItemImage> trayList;
+    private Table trayTable = new Table();
+    private Table invTable = new Table();
 
     private HorizontalGroup inventoryHGroup;
     private HorizontalGroup trayHGroup;
@@ -141,7 +146,7 @@ public class Hud implements Screen {
                 }
 
                 if (slotID == -1) {
-                    toggleInventory();
+                    inventory.toggle();
                 } else if (slotID == -2) {
                     /* Clicked on helmet */
                     inventory.returnItemToInventory(inventory.getHelmetArmor());
@@ -228,6 +233,34 @@ public class Hud implements Screen {
         stage.addActor(selector);
         stage.addActor(vestAbosrbLabel);
         stage.addActor(helmetAbsorbLabel);
+
+        initButtons2();
+    }
+
+    private void initButtons2() {
+        for (int i = 0; i < TRAY_SIZE; i++) {
+            HudImageButton slot = new HudImageButton(skin, INVENTORY_SIZE + i, inventory);
+            slot.addListener(new HudImageButtonClickListener(Input.Buttons.RIGHT, inventory, INVENTORY_SIZE + i));
+            trayTable.add(slot).width(48).height(48);
+            trayTable.row();
+        }
+        trayTable.setPosition(175, 200);
+
+        for (int i = 0; i < INVENTORY_SIZE; i++) {
+            HudImageButton slot = new HudImageButton(skin, i, inventory);
+            slot.addListener(new HudImageButtonClickListener(Input.Buttons.RIGHT, inventory, i));
+            invTable.add(slot).width(48).height(48);
+            invTable.row();
+        }
+
+        HudImageButton slot = new HudImageButton(skin, -1, inventory);
+        slot.addListener(new HudImageButtonClickListener(Input.Buttons.RIGHT, inventory, -1));
+        invTable.add(slot).width(24).height(48);
+
+
+        invTable.setPosition(100, 200);
+        stage.addActor(trayTable);
+        stage.addActor(invTable);
     }
 
     @Override
@@ -253,6 +286,7 @@ public class Hud implements Screen {
         vestAbosrbLabel.setText(inventory.getVestArmor() != null ? String.valueOf(inventory.getVestArmor().getDamageAbsorptionLevel()) : "");
 
         selectorPositionUpdate();
+        inventoryToggleUpdate();
     }
 
     private void selectorPositionUpdate() {
@@ -305,15 +339,16 @@ public class Hud implements Screen {
         return (item != null) ? item.getSquareSprite().getTexture() : backgroundTex;
     }
 
-    public void toggleInventory() {
-        if (hidden) {
-            toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(hideTex)));
-            inventoryHGroup.addAction(moveBy(-(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10), 0, 0.5f, Interpolation.pow2));
-            hidden = false;
-        } else {
-            toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(showTex)));
-            inventoryHGroup.addAction(moveBy(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10, 0, 0.5f, Interpolation.pow2));
-            hidden = true;
+    public void inventoryToggleUpdate() {
+        if (hidden != inventory.isHidden()) {
+            if (inventory.isHidden()) {
+                toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(hideTex)));
+                inventoryHGroup.addAction(moveBy(-(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10), 0, 0.5f, Interpolation.pow2));
+            } else {
+                toggleInventoryButton.setDrawable(new SpriteDrawable(new Sprite(showTex)));
+                inventoryHGroup.addAction(moveBy(INVENTORY_SIZE * 46 + INVENTORY_SIZE * 10, 0, 0.5f, Interpolation.pow2));
+            }
+            hidden = inventory.isHidden();
         }
     }
 
