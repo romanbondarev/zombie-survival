@@ -10,6 +10,7 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
 import com.gdx.game.Application;
 import com.gdx.game.utils.Constants;
+import com.gdx.game.utils.Utils;
 
 import static com.gdx.game.utils.WCC.pixelsToWorld;
 import static com.gdx.game.utils.WCC.worldToPixels;
@@ -20,17 +21,17 @@ public class Bullet {
     private int damage;
     private boolean canDelete = false;
 
-    public Bullet(World world, Vector2 shooter, Vector2 target, int damage) {
+    public Bullet(World world, Vector2 player, Vector2 target, int damage) {
         this.damage = damage;
         sprite = new Sprite(Application.assetManager.get("bullet.png", Texture.class));
         sprite.setScale(0.65f);
 
-        float bulletX = shooter.x;
-        float bulletY = shooter.y;
+        float bulletX = player.x;
+        float bulletY = player.y;
 
         /* MATH */
-        float x = target.x - shooter.x;
-        float y = target.y - shooter.y;
+        float x = target.x - player.x;
+        float y = target.y - player.y;
         double distanceInBetween = Math.sqrt(x * x + y * y);
         double degrees = -Math.toDegrees(Math.atan2(y, x));
 
@@ -88,4 +89,37 @@ public class Bullet {
     public boolean isCanDelete() {
         return canDelete;
     }
+
+    private Vector2 offsetTarget(Vector2 target, Vector2 playerPos, double angle) {
+        double initialAngle = Utils.getDegreesBetween(target, playerPos);
+        double A = 0.65;
+
+        double rightAngle = initialAngle - angle;
+
+        double gammaR = 90 - rightAngle;
+        double BR = A * Math.sin(Math.toRadians(rightAngle));
+        double CR = A * Math.sin(Math.toRadians(gammaR));
+        return new Vector2(((float) (playerPos.x + CR)), ((float) (playerPos.y + BR)));
+    }
+
+    /*
+
+    MATH offsetted to the right!!!
+
+    float x = target.x - player.x;
+    float y = target.y - player.y;
+    double distanceInBetween = Math.sqrt(x * x + y * y);
+    double degrees = -Math.toDegrees(Math.atan2(y, x)) ;
+
+    Vector2 newT = offsetTarget(target, player, 15);
+
+
+    // Body definition
+    BodyDef bodyDef = new BodyDef();
+    bodyDef.type = BodyDef.BodyType.DynamicBody;
+        bodyDef.position.set(newT.x, newT.y);
+    //bodyDef.position.set(bulletX + (pixelsToWorld((float) newX)), bulletY + pixelsToWorld((float) newY));
+    bodyDef.fixedRotation = true;
+
+    */
 }
