@@ -26,5 +26,11 @@
       up: default-round-down,
       down: default-round
     }
+  },
+  com.badlogic.gdx.scenes.scene2d.ui.ImageButton$ImageButtonStyle: {
+    default: {
+      up: default-round-down,
+      down: default-round
+    }
   }
 }
