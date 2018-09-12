@@ -4,13 +4,13 @@ import com.gdx.game.items.armor.Armor;
 import com.gdx.game.items.weapons.Weapon;
 import com.gdx.game.items.weapons.ammo.Ammo;
 import com.gdx.game.models.Player;
-import com.gdx.game.utils.Constants;
 
 import java.util.Arrays;
 import java.util.List;
 import java.util.Objects;
 
-import static com.gdx.game.utils.Constants.*;
+import static com.gdx.game.utils.Constants.INVENTORY_SIZE;
+import static com.gdx.game.utils.Constants.TRAY_SIZE;
 
 public class Inventory {
 
@@ -25,6 +25,7 @@ public class Inventory {
     private Item[] inventory;
     private Item[] tray;
 
+    private boolean hidden = false;
     private int selectedCellID = 0;
 
     /**
@@ -184,6 +185,14 @@ public class Inventory {
     }
 
     /**
+     * Toggles the inventory.
+     */
+    public void toggle() {
+        hidden = !hidden;
+        System.out.println("INV " + hidden);
+    }
+
+    /**
      * Gets the item from the inventory by its index.
      */
     public Item getItem(int number) {
@@ -260,5 +269,12 @@ public class Inventory {
      */
     public boolean hasSpace() {
         return Arrays.stream(inventory).anyMatch(Objects::isNull);
+    }
+
+    /**
+     * Checks if the inventory is hidden.
+     */
+    public boolean isHidden() {
+        return hidden;
     }
 }
