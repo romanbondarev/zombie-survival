@@ -113,33 +113,10 @@ public class LoadingState extends GameState {
 
     private void queueAssets() {
         /* SoundManager and music */
-        assetManager.load("sound/effects/rifleSingleShot.wav", Sound.class);
-        assetManager.load("sound/effects/handgunSingleShot.wav", Sound.class);
-        assetManager.load("sound/effects/itemPickUp.mp3", Sound.class);
-        assetManager.load("sound/effects/weaponReload.mp3", Music.class);
-        assetManager.load("sound/music/backgroundMusic.mp3", Music.class);
-        IntStream.range(1, 24).forEach(i -> assetManager.load("sound/effects/zombies/zombie-" + i + ".wav", Music.class));
-        /* WAV files must have 16 bits per sample: 24 */
+        loadSounds();
 
         /* Player animations */
-        assetManager.load("animation-assets/player/playerRifleMove.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/player/playerRifleReload.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/player/playerRifleShoot.atlas", TextureAtlas.class);
-
-        assetManager.load("animation-assets/player/playerHandgunMove.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/player/playerHandgunReload.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/player/playerHandgunShoot.atlas", TextureAtlas.class);
-
-        assetManager.load("animation-assets/player/playerMeleeAttack.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/player/playerMeleeMove.atlas", TextureAtlas.class);
-
-        /* Zombie animations */
-        assetManager.load("animation-assets/zombie/zombieIdle.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/zombie/zombieMove.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/zombie/zombieAttack.atlas", TextureAtlas.class);
-
-        assetManager.load("animation-assets/zombie/shooterIdle.atlas", TextureAtlas.class);
-        assetManager.load("animation-assets/zombie/shooterMove.atlas", TextureAtlas.class);
+        loadAnimations();
 
         /* HUD inventory items */
         assetManager.load("ui/background/background.png", Texture.class);
@@ -192,6 +169,37 @@ public class LoadingState extends GameState {
         agencyFB.fontParameters.size = 30;
         agencyFB.fontParameters.color = Color.WHITE;
         assetManager.load("agency-fb.ttf", BitmapFont.class, agencyFB);
+    }
+
+    private void loadSounds() {
+        assetManager.load("sound/effects/rifleSingleShot.wav", Sound.class);
+        assetManager.load("sound/effects/handgunSingleShot.wav", Sound.class);
+        assetManager.load("sound/effects/itemPickUp.mp3", Sound.class);
+        assetManager.load("sound/effects/weaponReload.mp3", Music.class);
+        assetManager.load("sound/music/backgroundMusic.mp3", Music.class);
+        IntStream.range(1, 24).forEach(i -> assetManager.load("sound/effects/zombies/zombie-" + i + ".wav", Music.class));
+        /* WAV files must have 16 bits per sample: 24 */
+    }
+
+    private void loadAnimations() {
+        assetManager.load("animation-assets/player/playerRifleMove.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/player/playerRifleReload.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/player/playerRifleShoot.atlas", TextureAtlas.class);
+
+        assetManager.load("animation-assets/player/playerHandgunMove.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/player/playerHandgunReload.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/player/playerHandgunShoot.atlas", TextureAtlas.class);
+
+        assetManager.load("animation-assets/player/playerMeleeAttack.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/player/playerMeleeMove.atlas", TextureAtlas.class);
+
+        /* Zombie animations */
+        assetManager.load("animation-assets/zombie/zombieIdle.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/zombie/zombieMove.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/zombie/zombieAttack.atlas", TextureAtlas.class);
+
+        assetManager.load("animation-assets/zombie/shooterIdle.atlas", TextureAtlas.class);
+        assetManager.load("animation-assets/zombie/shooterMove.atlas", TextureAtlas.class);
     }
 
     @Override
