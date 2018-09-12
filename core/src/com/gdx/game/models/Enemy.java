@@ -1,11 +1,13 @@
 package com.gdx.game.models;
 
+import com.badlogic.gdx.audio.Music;
 import com.badlogic.gdx.math.Vector2;
 import com.badlogic.gdx.physics.box2d.Body;
 import com.badlogic.gdx.physics.box2d.BodyDef;
 import com.badlogic.gdx.physics.box2d.CircleShape;
 import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.badlogic.gdx.physics.box2d.World;
+import com.gdx.game.managers.SoundManager;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
 
@@ -31,6 +33,7 @@ public abstract class Enemy {
     GameState gameState;
     Body body;
     World world;
+    Music sound;
 
     /**
      * Creates an enemy.
@@ -40,9 +43,11 @@ public abstract class Enemy {
      * @param y         inittal y coordinate (world coordinates)
      */
     public Enemy(GameState gameState, float x, float y) {
-        // Body definition
         this.world = ((PlayState) gameState).getWorld();
         this.gameState = gameState;
+        this.sound = SoundManager.randomZombieSound();
+
+        // Body definition
         BodyDef bodyDef = new BodyDef();
         bodyDef.type = BodyDef.BodyType.DynamicBody;
         bodyDef.position.set(x / PPM, y / PPM);
@@ -74,6 +79,8 @@ public abstract class Enemy {
      */
     public void takeDamage(int damage) {
         HP -= damage;
+        SoundManager.zombieDamage().play();
+        if (HP <= 0) SoundManager.zombieDeath().play();
     }
 
     /**
