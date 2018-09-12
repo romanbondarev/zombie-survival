@@ -14,4 +14,5 @@ public class ItemImage extends Image {
     public int getId() {
         return id;
     }
+
 }
