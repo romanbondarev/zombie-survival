@@ -12,11 +12,8 @@ import com.badlogic.gdx.physics.box2d.FixtureDef;
 import com.gdx.game.items.Inventory;
 import com.gdx.game.items.Item;
 import com.gdx.game.items.weapons.Rifle;
-import com.gdx.game.items.weapons.Shotgun;
 import com.gdx.game.items.weapons.Weapon;
 import com.gdx.game.items.weapons.ammo.RifleAmmo;
-import com.gdx.game.items.weapons.ammo.ShotgunAmmo;
-import com.gdx.game.managers.SoundManager;
 import com.gdx.game.models.animations.PlayerAnimation;
 import com.gdx.game.states.GameState;
 import com.gdx.game.states.PlayState;
@@ -25,8 +22,7 @@ import com.gdx.game.utils.Constants;
 import java.util.LinkedList;
 import java.util.List;
 
-import static com.gdx.game.utils.Constants.SMOOTH_MOVEMENT;
-import static com.gdx.game.utils.Constants.TRAY_SIZE;
+import static com.gdx.game.utils.Constants.SHARP_MOVEMENT;
 import static com.gdx.game.utils.WCC.mouseClickWorldPosition;
 import static com.gdx.game.utils.WCC.pixelsToWorld;
 import static com.gdx.game.utils.WCC.worldToPixels;
@@ -72,14 +68,18 @@ public class Player {
         shape.dispose();
 
         // Creating an inventory
-        this.inventory = new Inventory(this);
+        inventory = new Inventory(this);
         this.health = health;
         Constants.DEAD = false;
 
-        initInventory();
-        this.animation = new PlayerAnimation(this);
-    }
+        Rifle rifle = new Rifle("Riffle");
+        rifle.loadAmmo(new RifleAmmo(50, "AMMO"));
+        rifle.reload();
+        inventory.addItemToInventory(rifle);
+        inventory.selectItem(rifle);
 
+        animation = new PlayerAnimation(this);
+    }
 
     public void update() {
         Item item = inventory.getSelectedCellItem();
@@ -93,27 +93,28 @@ public class Player {
 
         if (Gdx.input.isKeyPressed(Input.Keys.W)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (!SMOOTH_MOVEMENT) velY += 1;
+            if (SHARP_MOVEMENT) velY += 1;
             else body.applyForceToCenter(0, force, false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.S)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (!SMOOTH_MOVEMENT) velY -= 1;
+            if (SHARP_MOVEMENT) velY -= 1;
             else body.applyForceToCenter(0, -force, false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.A)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (!SMOOTH_MOVEMENT) velX -= 1;
+            if (SHARP_MOVEMENT) velX -= 1;
             else body.applyForceToCenter(-force, 0, false);
         }
         if (Gdx.input.isKeyPressed(Input.Keys.D)) {
             animation.setAnimation(animation.chooseAnimation(item, PlayerAnimation.AnimationType.MOVE));
-            if (!SMOOTH_MOVEMENT) velX += 1;
+            if (SHARP_MOVEMENT) velX += 1;
             else body.applyForceToCenter(force, 0, false);
         }
 
-        if (!SMOOTH_MOVEMENT) body.setLinearVelocity(velX * 4.5f, velY * 4.5f); // DEFAULT
-        else body.setLinearVelocity(body.getLinearVelocity().x, body.getLinearVelocity().y);
+
+        if (SHARP_MOVEMENT) body.setLinearVelocity(velX * 4.5f, velY * 4.5f);
+        else body.setLinearVelocity(body.getLinearVelocity().x, body.getLinearVelocity().y); // DEFAULT
     }
 
     private void eventsUpdate(Item item) {
@@ -140,10 +141,10 @@ public class Player {
         }
 
         if (shootQueue && (animation.didShoot() || animation.didKnife()) && singleShoot) {
-            if (item instanceof Rifle) {
+            if (item != null && item instanceof Rifle) {
                 ((Weapon) item).shoot((gameState), camera, this);
                 shootQueue = false;
-            } else if (item instanceof Weapon) {
+            } else if (item != null && item instanceof Weapon) {
                 ((Weapon) item).shoot((gameState), camera, this);
                 singleShoot = false;
             } else if (item == null) {
@@ -199,13 +200,12 @@ public class Player {
         if (Gdx.input.isKeyJustPressed(Input.Keys.F)) {
             // See how item removing and adding works in PlayState objectDeletion() method
             for (Item item1 : new LinkedList<>(((PlayState) gameState).getItems())) {
-                double x = item1.getCircleSprite().getX() + item1.getCircleSprite().getHeight() / 2 - worldToPixels(getPosition().x);
-                double y = item1.getCircleSprite().getY() + item1.getCircleSprite().getWidth() / 2 - worldToPixels(getPosition().y);
+                double x = item1.getSprite().getX() + item1.getSprite().getHeight() / 2 - worldToPixels(getPosition().x);
+                double y = item1.getSprite().getY() + item1.getSprite().getWidth() / 2 - worldToPixels(getPosition().y);
                 double distanceInBetween = Math.sqrt(x * x + y * y);
 
                 if (distanceInBetween < 46) {
-                    if (inventory.hasSpace()) {
-                        SoundManager.itemPickUp().play();
+                    if (!inventory.isEmpty()) {
                         System.out.println("PICKED UP");
                         ((PlayState) gameState).getItems().remove(item1);
                         inventory.addItemToInventory(item1);
@@ -216,12 +216,25 @@ public class Player {
         }
 
         /* ### Select the TRAY item ###*/
-        for (int i = 8; i < 17; i++) {
-            if (Gdx.input.isKeyJustPressed(i) && i - 8 < TRAY_SIZE){
-                animation.resetReload();
-                inventory.setSelectedCellID(i - 8);
-                animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
-            }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_1)) {
+            animation.resetReload();
+            inventory.setSelectedCellInt(0);
+            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_2)) {
+            animation.resetReload();
+            inventory.setSelectedCellInt(1);
+            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_3)) {
+            animation.resetReload();
+            inventory.setSelectedCellInt(2);
+            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
+        }
+        if (Gdx.input.isKeyJustPressed(Input.Keys.NUM_4)) {
+            animation.resetReload();
+            inventory.setSelectedCellInt(3);
+            animation.setAnimation(animation.chooseAnimation(inventory.getSelectedCellItem(), PlayerAnimation.AnimationType.MOVE));
         }
     }
 
@@ -234,48 +247,6 @@ public class Player {
     public void render() {
         SpriteBatch batch = ((PlayState) gameState).getBatch();
         animation.renderAnimation(batch);
-    }
-
-    private void initInventory() {
-        Rifle rifle = new Rifle("Riffle");
-        rifle.loadAmmo(new RifleAmmo(5000, "AMMO"));
-        rifle.reload();
-        Shotgun shotgun = new Shotgun("Handgun");
-        shotgun.loadAmmo(new ShotgunAmmo(5000, "AMMO"));
-        shotgun.reload();
-        inventory.addItemToInventory(rifle);
-        inventory.selectItem(rifle);
-        inventory.setSelectedCellID(1);
-        inventory.addItemToInventory(shotgun);
-        inventory.selectItem(shotgun);
-        inventory.setSelectedCellID(0);
-    }
-
-    public void takeDamage(int damage) {
-        damage = 0;
-        int helmetDamageAbsorption;
-        int vestDamageAbsorption;
-
-        if (inventory.getHelmetArmor() != null) {
-            helmetDamageAbsorption = inventory.getHelmetArmor().getDamageAbsorptionLevel();
-            inventory.getHelmetArmor().wear(1);
-            if (inventory.getHelmetArmor().isBroken()) inventory.setHelmetArmor(null);
-        } else helmetDamageAbsorption = 0;
-
-        if (inventory.getVestArmor() != null) {
-            vestDamageAbsorption = inventory.getVestArmor().getDamageAbsorptionLevel();
-            inventory.getVestArmor().wear(1);
-            if (inventory.getVestArmor().isBroken()) inventory.setVestArmor(null);
-        } else vestDamageAbsorption = 0;
-
-
-        int armor = helmetDamageAbsorption + vestDamageAbsorption;
-        if (health - damage + armor > 0) {
-            if (armor > damage) ;
-            else health = health - damage + armor;
-        } else {
-            Constants.DEAD = true;
-        }
     }
 
     public Body getBody() {
@@ -300,6 +271,32 @@ public class Player {
 
     public void setHealth(int health) {
         this.health = health;
+    }
+
+    public void takeDamage(int damage) {
+        int helmetDamageAbsorption;
+        int vestDamageAbsorption;
+
+        if (inventory.getHelmetArmor() != null) {
+            helmetDamageAbsorption = inventory.getHelmetArmor().getDamageAbsorptionLevel();
+            inventory.getHelmetArmor().wear(1);
+            if (inventory.getHelmetArmor().isBroken()) inventory.setHelmetArmor(null);
+        } else helmetDamageAbsorption = 0;
+
+        if (inventory.getVestArmor() != null) {
+            vestDamageAbsorption = inventory.getVestArmor().getDamageAbsorptionLevel();
+            inventory.getVestArmor().wear(1);
+            if (inventory.getVestArmor().isBroken()) inventory.setVestArmor(null);
+        } else vestDamageAbsorption = 0;
+
+
+        int armor = helmetDamageAbsorption + vestDamageAbsorption;
+        if (health - damage + armor > 0) {
+            if (armor > damage) ;
+            else health = health - damage + armor;
+        } else {
+            Constants.DEAD = true;
+        }
     }
 
 }

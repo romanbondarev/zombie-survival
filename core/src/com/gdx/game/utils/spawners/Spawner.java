@@ -10,10 +10,11 @@ public abstract class Spawner {
 
     GameState gamestate;
     private Player player;
-    float xPos, yPos;
+    float xPos;
+    float yPos;
     double distanceInBetween;
-    private int counter;
-    private int timeOut;
+    private int counter = 0;
+    private int timeOut = 0;
     private Random random = new Random();
 
     public Spawner(GameState gameState, Player player, float xPos, float yPos) {
@@ -21,8 +22,7 @@ public abstract class Spawner {
         this.player = player;
         this.xPos = xPos;
         this.yPos = yPos;
-        this.counter = 0;
-        this.timeOut = 300 + random.nextInt(30) * 10;
+        timeOut = 300 + random.nextInt(30) * 10;
         spawn();
     }
 

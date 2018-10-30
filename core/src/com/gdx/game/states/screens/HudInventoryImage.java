@@ -1,12 +1,12 @@
-package com.gdx.game.components;
+package com.gdx.game.states.screens;
 
 import com.badlogic.gdx.graphics.Texture;
 import com.badlogic.gdx.scenes.scene2d.ui.Image;
 
-public class ItemImage extends Image {
+public class HudInventoryImage extends Image {
     private int id;
 
-    public ItemImage(Texture texture, int id) {
+    public HudInventoryImage(Texture texture, int id) {
         super(texture);
         this.id = id;
     }

@@ -10,7 +10,6 @@ import static com.gdx.game.utils.Constants.PPM;
  * World Coordinates Converter
  */
 public class WCC {
-
     /**
      * Converts mouse position coordinates to the world coordinates.
      */
@@ -40,4 +39,5 @@ public class WCC {
     public static float getPPM() {
         return PPM;
     }
+
 }

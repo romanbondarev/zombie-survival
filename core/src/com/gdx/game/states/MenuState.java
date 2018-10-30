@@ -6,47 +6,41 @@ import com.gdx.game.states.screens.Settings;
 import com.gdx.game.utils.Constants;
 
 public class MenuState extends GameState {
-    private Menu menuTab;
-    private Settings settingsTab;
+    private Menu menu;
+    private Settings settings;
 
     public MenuState(GameStateManager gameStateManager, GameStateManager.State state) {
         super(gameStateManager, state);
-        menuTab = new Menu(gameStateManager);
-        settingsTab = new Settings(gameStateManager);
+        menu = new Menu(gameStateManager);
+        settings = new Settings(gameStateManager);
     }
 
     @Override
     public void update(float delta) {
         if (Constants.MENU_ON) {
-            menuTab.update();
-            menuTab.resetInputProcessor();
+            menu.update();
+            menu.resetInputProcessor();
         } else {
-            settingsTab.update();
-            settingsTab.resetInputProcessor();
+            settings.update();
+            settings.resetInputProcessor();
         }
     }
 
     @Override
     public void render() {
-        if (Constants.MENU_ON) {
-            menuTab.render();
-        } else {
-            settingsTab.render();
-        }
+        if (Constants.MENU_ON) menu.render();
+        else settings.render();
     }
 
     @Override
     public void resize(int width, int height) {
-        if (Constants.MENU_ON) {
-            menuTab.resize(width, height);
-        } else {
-            settingsTab.resize(width, height);
-        }
+        if (Constants.MENU_ON) menu.resize(width, height);
+        else settings.resize(width, height);
     }
 
     @Override
     public void dispose() {
-        menuTab.dispose();
-        settingsTab.dispose();
+        menu.dispose();
+        settings.dispose();
     }
 }
